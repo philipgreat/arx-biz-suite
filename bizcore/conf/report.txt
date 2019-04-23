@@ -1,0 +1,318 @@
+
+
+
+=================Execute Report (Model Time 190423T1833) @Tue Apr 23 18:34:25 CST 2019, 16 objects and 125 fields===========================
+
+
+
+ processing: platform
+
+
+ processing: target_object
+
+
+ processing: view_device
+
+
+ processing: view_device.platform.platform
+
+Info: Add virtual field [view_devices(es)] to <platform>
+	view_device.platform
+
+
+**************************************************
+
+platform{
+	fields(4){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('ARX'), verb: false, required: true;
+		string_longtext	description('text()'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(1){
+		viewDeviceList	platform(__no_group)--platform;
+	}
+} depth=0; isRoot = true
+
+target_object{
+	fields(8){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('目标对象'), verb: false, required: true;
+		double	longitude('104.0668'), verb: false, required: true;
+		double	latitude('30.5728'), verb: false, required: true;
+		int	height('10000|20000|30000|40000'), verb: false, required: true;
+		string	text_content('测试目标'), verb: false, required: true;
+		string	image_path('ban-400-300-red'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=0; isRoot = true
+
+view_device{
+	fields(7){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('测试设备'), verb: false, required: true;
+		double	longitude('104.0668'), verb: false, required: true;
+		double	latitude('30.5728'), verb: false, required: true;
+		int	height('10000|20000|30000|40000'), verb: false, required: true;
+		platform	platform('$(object)'), verb: false, required: true, referenceBy: viewDeviceList;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=1; isRoot = false
+
+platform{
+	fields(4){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('ARX'), verb: false, required: true;
+		string_longtext	description('text()'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(1){
+		viewDeviceList	platform(__no_group)--platform;
+	}
+} depth=0; isRoot = true
+
+target_object{
+	fields(8){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('目标对象'), verb: false, required: true;
+		double	longitude('104.0668'), verb: false, required: true;
+		double	latitude('30.5728'), verb: false, required: true;
+		int	height('10000|20000|30000|40000'), verb: false, required: true;
+		string	text_content('测试目标'), verb: false, required: true;
+		string	image_path('ban-400-300-red'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=0; isRoot = true
+
+view_device{
+	fields(7){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('测试设备'), verb: false, required: true;
+		double	longitude('104.0668'), verb: false, required: true;
+		double	latitude('30.5728'), verb: false, required: true;
+		int	height('10000|20000|30000|40000'), verb: false, required: true;
+		platform	platform('$(object)'), verb: false, required: true, referenceBy: viewDeviceList;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=1; isRoot = false
+
+user_domain{
+	fields(3){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('用户区域'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(2){
+		userWhiteListList	domain(__no_group)--domain;
+		secUserList	domain(__no_group)--domain;
+	}
+} depth=0; isRoot = true
+
+user_white_list{
+	fields(5){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	user_identity('clariones|13808188512'), verb: false, required: true;
+		string	user_special_functions('tester;ios-spokesperson'), verb: false, required: true;
+		user_domain	domain('$(object)'), verb: false, required: true, referenceBy: userWhiteListList;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=1; isRoot = false
+
+sec_user{
+	fields(12){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	login('login'), verb: false, required: true;
+		string_china_mobile_phone	mobile('13900000001'), verb: false, required: true;
+		string	email('|suddy_chang@163.com'), verb: false, required: false;
+		string_password	pwd('*******'), verb: false, required: true;
+		int	verification_code('0|9999999'), verb: false, required: true;
+		date_time	verification_code_expire('2099-12-31T09:09:09'), verb: false, required: true;
+		date_time	last_login_time('2099-12-31T09:09:09'), verb: false, required: true;
+		user_domain	domain('$(object)'), verb: false, required: true, referenceBy: secUserList;
+		sec_user_blocking	blocking('$(object)'), verb: true, required: true, referenceBy: secUserList;
+		string	current_status('BLOCKED'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(2){
+		userAppList	sec_user(__no_group)--sec_user;
+		loginHistoryList	sec_user(__no_group)--sec_user;
+	}
+} depth=1; isRoot = false
+
+sec_user_blocking{
+	fields(5){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	who('currentUser()'), verb: false, required: true;
+		date_time_create	block_time('createTime()'), verb: false, required: true;
+		string	comments('这个用户多次发送违反社区的帖子，现在把他给屏蔽了'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(1){
+		secUserList	blocking(__no_group)--blocking;
+	}
+} depth=0; isRoot = true
+
+user_app{
+	fields(10){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	title('审车平台|账户管理|接车公司|审车公司|维修公司|顾客'), verb: false, required: true;
+		sec_user	sec_user('$(object)'), verb: false, required: true, referenceBy: userAppList;
+		string	app_icon('users|bank|wechat|bar-chart|user|users'), verb: false, required: true;
+		bool	full_access('true'), verb: false, required: true;
+		string	permission('MXWR|MXWR'), verb: false, required: true;
+		string	object_type('CarInspectionPlatform|UserDomain|CarReceivingServiceCompany|CarInspectionServiceCompany|CarRepairingServiceCompany|CustomerInfo'), verb: false, required: true;
+		string	object_id('CIP000001|UD000001|CRSC000001|CISC000001|CRSC000001|CI000001'), verb: false, required: true;
+		string	location('/link/to/app'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(2){
+		listAccessList	app(__no_group)--app;
+		objectAccessList	app(__no_group)--app;
+	}
+} depth=2; isRoot = false
+
+list_access{
+	fields(10){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('列表'), verb: false, required: true;
+		string	internal_name('levelOneCategoryList'), verb: false, required: true;
+		bool	read_permission('true'), verb: false, required: true;
+		bool	create_permission('true'), verb: false, required: true;
+		bool	delete_permission('true'), verb: false, required: true;
+		bool	update_permission('true'), verb: false, required: true;
+		bool	execution_permission('true'), verb: false, required: true;
+		user_app	app('$(object)'), verb: false, required: true, referenceBy: listAccessList;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=3; isRoot = false
+
+object_access{
+	fields(14){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	name('控制访问列表1'), verb: false, required: true;
+		string	object_type('FranchiseeStoreCountryCenter|AccountSet'), verb: false, required: true;
+		string	list1('catalogList|levelOneCategoryList'), verb: false, required: true;
+		string	list2('catalogList|levelOneCategoryList'), verb: false, required: true;
+		string	list3('catalogList|levelOneCategoryList'), verb: false, required: true;
+		string	list4('catalogList|levelOneCategoryList'), verb: false, required: true;
+		string	list5('catalogList|levelOneCategoryList'), verb: false, required: true;
+		string	list6('catalogList|levelOneCategoryList'), verb: false, required: true;
+		string	list7('catalogList|levelOneCategoryList'), verb: false, required: true;
+		string	list8('catalogList|levelOneCategoryList'), verb: false, required: true;
+		string	list9('catalogList|levelOneCategoryList'), verb: false, required: true;
+		user_app	app('$(object)'), verb: false, required: true, referenceBy: objectAccessList;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=3; isRoot = false
+
+login_history{
+	fields(6){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		date_time_create	login_time('createTime()'), verb: false, required: true;
+		string	from_ip('192.168.1.1|192.168.1.2'), verb: false, required: true;
+		string	description('登陆成功'), verb: false, required: true;
+		sec_user	sec_user('$(object)'), verb: false, required: true, referenceBy: loginHistoryList;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=2; isRoot = false
+
+generic_form{
+	fields(4){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	title('登记输入单'), verb: false, required: true;
+		string	description('姓名就是你身份证上的名字'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(4){
+		formMessageList	form(__no_group)--form;
+		formFieldMessageList	form(__no_group)--form;
+		formFieldList	form(__no_group)--form;
+		formActionList	form(__no_group)--form;
+	}
+} depth=0; isRoot = true
+
+form_message{
+	fields(5){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	title('字段组合错误'), verb: false, required: true;
+		generic_form	form('$(object)'), verb: false, required: true, referenceBy: formMessageList;
+		string	level('success|info|warning|danger'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=1; isRoot = false
+
+form_field_message{
+	fields(6){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	title('输入错误'), verb: false, required: true;
+		string	parameter_name('name'), verb: false, required: true;
+		generic_form	form('$(object)'), verb: false, required: true, referenceBy: formFieldMessageList;
+		string	level('success|info|warning|danger'), verb: false, required: true;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=1; isRoot = false
+
+form_field{
+	fields(18){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	label('姓名|年龄|出生地|国籍'), verb: false, required: true;
+		string	locale_key('name|age|birth_place|country'), verb: false, required: true;
+		string	parameter_name('name'), verb: false, required: true;
+		string	type('text|longtext|date|date_time|money|url|image|password|number|switch|vcode'), verb: false, required: true;
+		generic_form	form('$(object)'), verb: false, required: true, referenceBy: formFieldList;
+		string	placeholder('姓名就是你身份证上的名字'), verb: false, required: true;
+		string	default_value('李一一'), verb: false, required: true;
+		string	description('姓名就是你身份证上的名字'), verb: false, required: true;
+		string	field_group('基础信息|扩展信息'), verb: false, required: true;
+		string	minimum_value('maybe any value'), verb: false, required: true;
+		string	maximum_value('a value expression'), verb: false, required: true;
+		bool	required('true|false'), verb: false, required: true;
+		bool	disabled('true|false'), verb: false, required: true;
+		bool	custom_rendering('false'), verb: false, required: true;
+		string	candidate_values('|||男,女|高,矮'), verb: false, required: false;
+		string	suggest_values('|||男,女|高,矮'), verb: false, required: false;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=1; isRoot = false
+
+form_action{
+	fields(8){
+		string	id('ABCDEFGIJK000001'), verb: false, required: true;
+		string	label('功能'), verb: false, required: true;
+		string	locale_key('name'), verb: false, required: true;
+		string	action_key('save|update|remove'), verb: false, required: true;
+		string	level('default|warning|danger|primary'), verb: false, required: true;
+		string	url('genericFormManager/name/name0002/name0003/'), verb: false, required: true;
+		generic_form	form('$(object)'), verb: false, required: true, referenceBy: formActionList;
+		int	version('2147483647'), verb: false, required: true;
+	}
+	references field(0){
+	}
+} depth=1; isRoot = false
+
+
+
+
+=================================End Report=================================

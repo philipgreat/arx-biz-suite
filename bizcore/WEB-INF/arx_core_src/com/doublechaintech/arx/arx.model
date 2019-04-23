@@ -1,0 +1,57 @@
+<root org="doublechaintech"
+
+	chinese_name="ARX" 
+	english_name="ARX"
+	
+
+>
+	
+	
+	<platform
+		name='ARX|[1,200]' 
+		description="text()"
+	/>
+	<!-- height 单位是毫米 -->
+	<target_object
+		name="目标对象"
+		longitude="104.0668"
+        latitude="30.5728"
+        height="10000|20000|30000|40000"
+        text_content="测试目标"
+		image_path="ban-400-300-red"
+	/>
+	<!-- height 测试设备，从哪里观察目标 -->
+	<view_device
+		name="测试设备"
+		longitude="104.0668"
+        latitude="30.5728"
+        height="10000|20000|30000|40000"
+		platform="$(platform)"
+		_features="setting"
+		
+	/>
+	
+	
+
+	
+	
+	
+</root>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
