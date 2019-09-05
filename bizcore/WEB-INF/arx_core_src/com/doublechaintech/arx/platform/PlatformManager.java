@@ -27,6 +27,16 @@ public interface PlatformManager{
 	/*======================================================DATA MAINTENANCE===========================================================*/
 	
 
+	//public  TargetObjectManager getTargetObjectManager(ArxUserContext userContext, String platformId, String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath ,String [] tokensExpr)  throws Exception;
+	
+	public  Platform addTargetObject(ArxUserContext userContext, String platformId, String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath , String [] tokensExpr)  throws Exception;
+	public  Platform removeTargetObject(ArxUserContext userContext, String platformId, String targetObjectId, int targetObjectVersion,String [] tokensExpr)  throws Exception;
+	public  Platform updateTargetObject(ArxUserContext userContext, String platformId, String targetObjectId, int targetObjectVersion, String property, String newValueExpr,String [] tokensExpr)  throws Exception;
+
+	/*
+
+	*/
+
 	//public  ViewDeviceManager getViewDeviceManager(ArxUserContext userContext, String platformId, String name, BigDecimal longitude, BigDecimal latitude, int height ,String [] tokensExpr)  throws Exception;
 	
 	public  Platform addViewDevice(ArxUserContext userContext, String platformId, String name, BigDecimal longitude, BigDecimal latitude, int height , String [] tokensExpr)  throws Exception;

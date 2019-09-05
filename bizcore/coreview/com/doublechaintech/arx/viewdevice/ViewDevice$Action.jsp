@@ -22,6 +22,7 @@
 <li><span>${userContext.localeMap['view_device.longitude']}</span> ${viewDevice.longitude}</li>
 <li><span>${userContext.localeMap['view_device.latitude']}</span> ${viewDevice.latitude}</li>
 <li><span>${userContext.localeMap['view_device.height']}</span> ${viewDevice.height}</li>
+<li><span>${userContext.localeMap['view_device.create_time']}</span> <fmt:formatDate pattern="yyyy-MM-dd" value="${viewDevice.createTime}" /></li>
 
 	
 	</ul>

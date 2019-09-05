@@ -20,13 +20,24 @@ import com.doublechaintech.arx.MultipleAccessKey;
 import com.doublechaintech.arx.ArxUserContext;
 
 
+import com.doublechaintech.arx.platform.Platform;
 
+import com.doublechaintech.arx.platform.PlatformDAO;
 
 
 
 import org.springframework.dao.EmptyResultDataAccessException;
 
 public class TargetObjectJDBCTemplateDAO extends ArxNamingServiceDAO implements TargetObjectDAO{
+ 
+ 	
+ 	private  PlatformDAO  platformDAO;
+ 	public void setPlatformDAO(PlatformDAO platformDAO){
+	 	this.platformDAO = platformDAO;
+ 	}
+ 	public PlatformDAO getPlatformDAO(){
+	 	return this.platformDAO;
+ 	}
 
 
 			
@@ -164,7 +175,21 @@ public class TargetObjectJDBCTemplateDAO extends ArxNamingServiceDAO implements 
 	
 	}
 
+ 
 
+ 	protected boolean isExtractPlatformEnabled(Map<String,Object> options){
+ 		
+	 	return checkOptions(options, TargetObjectTokens.PLATFORM);
+ 	}
+
+ 	protected boolean isSavePlatformEnabled(Map<String,Object> options){
+	 	
+ 		return checkOptions(options, TargetObjectTokens.PLATFORM);
+ 	}
+ 	
+
+ 	
+ 
 		
 
 	
@@ -191,15 +216,89 @@ public class TargetObjectJDBCTemplateDAO extends ArxNamingServiceDAO implements 
 	protected TargetObject loadInternalTargetObject(AccessKey accessKey, Map<String,Object> loadOptions) throws Exception{
 		
 		TargetObject targetObject = extractTargetObject(accessKey, loadOptions);
-
+ 	
+ 		if(isExtractPlatformEnabled(loadOptions)){
+	 		extractPlatform(targetObject, loadOptions);
+ 		}
+ 
 		
 		return targetObject;
 		
 	}
 
-	
+	 
+
+ 	protected TargetObject extractPlatform(TargetObject targetObject, Map<String,Object> options) throws Exception{
+
+		if(targetObject.getPlatform() == null){
+			return targetObject;
+		}
+		String platformId = targetObject.getPlatform().getId();
+		if( platformId == null){
+			return targetObject;
+		}
+		Platform platform = getPlatformDAO().load(platformId,options);
+		if(platform != null){
+			targetObject.setPlatform(platform);
+		}
+		
+ 		
+ 		return targetObject;
+ 	}
+ 		
+ 
 		
 		
+  	
+ 	public SmartList<TargetObject> findTargetObjectByPlatform(String platformId,Map<String,Object> options){
+ 	
+  		SmartList<TargetObject> resultList = queryWith(TargetObjectTable.COLUMN_PLATFORM, platformId, options, getTargetObjectMapper());
+		// analyzeTargetObjectByPlatform(resultList, platformId, options);
+		return resultList;
+ 	}
+ 	 
+ 
+ 	public SmartList<TargetObject> findTargetObjectByPlatform(String platformId, int start, int count,Map<String,Object> options){
+ 		
+ 		SmartList<TargetObject> resultList =  queryWithRange(TargetObjectTable.COLUMN_PLATFORM, platformId, options, getTargetObjectMapper(), start, count);
+ 		//analyzeTargetObjectByPlatform(resultList, platformId, options);
+ 		return resultList;
+ 		
+ 	}
+ 	public void analyzeTargetObjectByPlatform(SmartList<TargetObject> resultList, String platformId, Map<String,Object> options){
+		if(resultList==null){
+			return;//do nothing when the list is null.
+		}
+		
+ 		MultipleAccessKey filterKey = new MultipleAccessKey();
+ 		filterKey.put(TargetObject.PLATFORM_PROPERTY, platformId);
+ 		Map<String,Object> emptyOptions = new HashMap<String,Object>();
+ 		
+ 		StatsInfo info = new StatsInfo();
+ 		
+ 
+		StatsItem createTimeStatsItem = new StatsItem();
+		//TargetObject.CREATE_TIME_PROPERTY
+		createTimeStatsItem.setDisplayName("目标对象");
+		createTimeStatsItem.setInternalName(formatKeyForDateLine(TargetObject.CREATE_TIME_PROPERTY));
+		createTimeStatsItem.setResult(statsWithGroup(DateKey.class,wrapWithDate(TargetObject.CREATE_TIME_PROPERTY),filterKey,emptyOptions));
+		info.addItem(createTimeStatsItem);
+ 				
+ 		resultList.setStatsInfo(info);
+
+ 	
+ 		
+ 	}
+ 	@Override
+ 	public int countTargetObjectByPlatform(String platformId,Map<String,Object> options){
+
+ 		return countWith(TargetObjectTable.COLUMN_PLATFORM, platformId, options);
+ 	}
+ 	@Override
+	public Map<String, Integer> countTargetObjectByPlatformIds(String[] ids, Map<String, Object> options) {
+		return countWithIds(TargetObjectTable.COLUMN_PLATFORM, ids, options);
+	}
+ 	
  	
 		
 		
@@ -342,22 +441,27 @@ public class TargetObjectJDBCTemplateDAO extends ArxNamingServiceDAO implements 
  		return prepareTargetObjectCreateParameters(targetObject);
  	}
  	protected Object[] prepareTargetObjectUpdateParameters(TargetObject targetObject){
- 		Object[] parameters = new Object[9];
+ 		Object[] parameters = new Object[11];
  
  		parameters[0] = targetObject.getName();
  		parameters[1] = targetObject.getLongitude();
  		parameters[2] = targetObject.getLatitude();
  		parameters[3] = targetObject.getHeight();
  		parameters[4] = targetObject.getTextContent();
- 		parameters[5] = targetObject.getImagePath();		
- 		parameters[6] = targetObject.nextVersion();
- 		parameters[7] = targetObject.getId();
- 		parameters[8] = targetObject.getVersion();
+ 		parameters[5] = targetObject.getImagePath(); 	
+ 		if(targetObject.getPlatform() != null){
+ 			parameters[6] = targetObject.getPlatform().getId();
+ 		}
+ 
+ 		parameters[7] = targetObject.getCreateTime();		
+ 		parameters[8] = targetObject.nextVersion();
+ 		parameters[9] = targetObject.getId();
+ 		parameters[10] = targetObject.getVersion();
  				
  		return parameters;
  	}
  	protected Object[] prepareTargetObjectCreateParameters(TargetObject targetObject){
-		Object[] parameters = new Object[7];
+		Object[] parameters = new Object[9];
 		String newTargetObjectId=getNextId();
 		targetObject.setId(newTargetObjectId);
 		parameters[0] =  targetObject.getId();
@@ -367,7 +471,13 @@ public class TargetObjectJDBCTemplateDAO extends ArxNamingServiceDAO implements 
  		parameters[3] = targetObject.getLatitude();
  		parameters[4] = targetObject.getHeight();
  		parameters[5] = targetObject.getTextContent();
- 		parameters[6] = targetObject.getImagePath();		
+ 		parameters[6] = targetObject.getImagePath(); 	
+ 		if(targetObject.getPlatform() != null){
+ 			parameters[7] = targetObject.getPlatform().getId();
+ 		
+ 		}
+ 		
+ 		parameters[8] = targetObject.getCreateTime();		
  				
  		return parameters;
  	}
@@ -375,7 +485,11 @@ public class TargetObjectJDBCTemplateDAO extends ArxNamingServiceDAO implements 
 	protected TargetObject saveInternalTargetObject(TargetObject targetObject, Map<String,Object> options){
 		
 		saveTargetObject(targetObject);
-
+ 	
+ 		if(isSavePlatformEnabled(options)){
+	 		savePlatform(targetObject, options);
+ 		}
+ 
 		
 		return targetObject;
 		
@@ -384,7 +498,24 @@ public class TargetObjectJDBCTemplateDAO extends ArxNamingServiceDAO implements 
 	
 	
 	//======================================================================================
+	 
+ 
+ 	protected TargetObject savePlatform(TargetObject targetObject, Map<String,Object> options){
+ 		//Call inject DAO to execute this method
+ 		if(targetObject.getPlatform() == null){
+ 			return targetObject;//do nothing when it is null
+ 		}
+ 		
+ 		getPlatformDAO().save(targetObject.getPlatform(),options);
+ 		return targetObject;
+ 		
+ 	}
+ 	
+ 	
+ 	
+ 	 
 	
+ 
 
 	
 

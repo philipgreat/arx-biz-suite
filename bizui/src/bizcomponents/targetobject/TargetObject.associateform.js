@@ -19,16 +19,17 @@ const testValues = {};
 /*
 const testValues = {
   name: '目标对象',
-  longitude: '105.33797821435024',
-  latitude: '31.38630545040975',
+  longitude: '104.15399950364784',
+  latitude: '30.81126872590736',
   height: '10000',
   textContent: '测试目标',
-  imagePath: 'ban-400-300-red',
+  platformId: 'P000001',
 }
 */
 
 
 const imageKeys = [
+  'imagePath',
 ]
 
 
@@ -187,16 +188,6 @@ class TargetObjectAssociateForm extends Component {
                 </Form.Item>
               </Col>
 
-              <Col lg={12} md={12} sm={12}>
-                <Form.Item label={fieldLabels.imagePath} {...formItemLayout}>
-                  {getFieldDecorator('imagePath', {
-                    rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
-                  })(
-                    <Input size="large" placeholder="图片路径" />
-                  )}
-                </Form.Item>
-              </Col>
-
             </Row>
 
 
@@ -209,7 +200,44 @@ class TargetObjectAssociateForm extends Component {
 
 
 
+       
+            <Row gutter={16}>
 
+              <Col lg={6} md={12} sm={24}>
+                <ImageComponent
+                  buttonTitle="图片路径"
+                  handlePreview={this.handlePreview}
+                  handleChange={event => this.handleChange(event, 'imagePath')}
+                  fileList={convertedImagesValues.imagePath}
+                />
+              </Col>
+
+            </Row>
+         
+
+
+
+       
+            <Row gutter={16}>
+
+              <Col lg={12} md={12} sm={24}>
+                <Form.Item label={fieldLabels.platform} {...formItemLayout}>
+                  {getFieldDecorator('platformId', {
+                  	initialValue: tryinit('platform'),
+                    rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
+                  })(
+                <SelectObject 
+                    disabled={!availableForEdit('platform')}
+                    targetType={"platform"} 
+                    requestFunction={TargetObjectService.requestCandidatePlatform}/>
+  
+                  )}
+                </Form.Item>
+              </Col>
+
+            </Row>
+         
+       
 
 			</Form>
 			

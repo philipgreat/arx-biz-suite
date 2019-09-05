@@ -103,6 +103,20 @@ public class ViewDeviceForm extends BaseForm {
 		return platformIdField("platformId","");
 	}
 
+
+	public ViewDeviceForm createTimeField(String parameterName, String initValue){
+		FormField field = createTimeFromViewDevice(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public ViewDeviceForm createTimeField(String initValue){
+		return createTimeField("createTime",initValue);
+	}
+	public ViewDeviceForm createTimeField(){
+		return createTimeField("createTime","");
+	}
+
 	
 	
 

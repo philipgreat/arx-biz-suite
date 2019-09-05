@@ -12,6 +12,8 @@ Latitude|纬度
 Height|高度
 Text Content|文本内容
 Image Path|图片路径
+Platform|平台
+Create Time|创建时间
 Version|版本
 View Device|查看设备
 Id|ID
@@ -20,6 +22,7 @@ Longitude|经度
 Latitude|纬度
 Height|高度
 Platform|平台
+Create Time|创建时间
 Version|版本
 User Domain|用户域
 Id|ID

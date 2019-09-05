@@ -11,6 +11,7 @@ import com.doublechaintech.arx.SmartList;
 import com.doublechaintech.arx.KeyValuePair;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.doublechaintech.arx.platform.Platform;
 
 @JsonSerialize(using = TargetObjectSerializer.class)
 public class TargetObject extends BaseEntity implements  java.io.Serializable{
@@ -23,6 +24,8 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 	public static final String HEIGHT_PROPERTY                = "height"            ;
 	public static final String TEXT_CONTENT_PROPERTY          = "textContent"       ;
 	public static final String IMAGE_PATH_PROPERTY            = "imagePath"         ;
+	public static final String PLATFORM_PROPERTY              = "platform"          ;
+	public static final String CREATE_TIME_PROPERTY           = "createTime"        ;
 	public static final String VERSION_PROPERTY               = "version"           ;
 
 
@@ -52,6 +55,8 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 	protected		int                 	mHeight             ;
 	protected		String              	mTextContent        ;
 	protected		String              	mImagePath          ;
+	protected		Platform            	mPlatform           ;
+	protected		DateTime            	mCreateTime         ;
 	protected		int                 	mVersion            ;
 	
 	
@@ -62,11 +67,12 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 	}
 	// disconnect from all, 中文就是一了百了，跟所有一切尘世断绝往来藏身于茫茫数据海洋
 	public 	void clearFromAll(){
+		setPlatform( null );
 
 		this.changed = true;
 	}
 	
-	public 	TargetObject(String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath)
+	public 	TargetObject(String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath, Platform platform, DateTime createTime)
 	{
 		setName(name);
 		setLongitude(longitude);
@@ -74,6 +80,8 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 		setHeight(height);
 		setTextContent(textContent);
 		setImagePath(imagePath);
+		setPlatform(platform);
+		setCreateTime(createTime);
 	
 	}
 	
@@ -98,6 +106,9 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 		}
 		if(IMAGE_PATH_PROPERTY.equals(property)){
 			changeImagePathProperty(newValueExpr);
+		}
+		if(CREATE_TIME_PROPERTY.equals(property)){
+			changeCreateTimeProperty(newValueExpr);
 		}
 
       
@@ -188,6 +199,21 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 		//they are surely different each other
 		updateImagePath(newValue);
 		this.onChangeProperty(IMAGE_PATH_PROPERTY, oldValue, newValue);
+		return;
+  
+	}
+			
+			
+			
+	protected void changeCreateTimeProperty(String newValueExpr){
+		DateTime oldValue = getCreateTime();
+		DateTime newValue = parseTimestamp(newValueExpr);
+		if(equalsTimestamp(oldValue , newValue)){
+			return;//they can be both null, or exact the same object, this is much faster than equals function
+		}
+		//they are surely different each other
+		updateCreateTime(newValue);
+		this.onChangeProperty(CREATE_TIME_PROPERTY, oldValue, newValue);
 		return;
   
 	}
@@ -311,6 +337,43 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 	}
 	
 	
+	public void setPlatform(Platform platform){
+		this.mPlatform = platform;;
+	}
+	public Platform getPlatform(){
+		return this.mPlatform;
+	}
+	public TargetObject updatePlatform(Platform platform){
+		this.mPlatform = platform;;
+		this.changed = true;
+		return this;
+	}
+	public void mergePlatform(Platform platform){
+		if(platform != null) { setPlatform(platform);}
+	}
+	
+	
+	public void clearPlatform(){
+		setPlatform ( null );
+		this.changed = true;
+	}
+	
+	public void setCreateTime(DateTime createTime){
+		this.mCreateTime = createTime;;
+	}
+	public DateTime getCreateTime(){
+		return this.mCreateTime;
+	}
+	public TargetObject updateCreateTime(DateTime createTime){
+		this.mCreateTime = createTime;;
+		this.changed = true;
+		return this;
+	}
+	public void mergeCreateTime(DateTime createTime){
+		setCreateTime(createTime);
+	}
+	
+	
 	public void setVersion(int version){
 		this.mVersion = version;;
 	}
@@ -330,6 +393,7 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 
 	public void collectRefercences(BaseEntity owner, List<BaseEntity> entityList, String internalType){
 
+		addToEntityList(this, entityList, getPlatform(), internalType);
 
 		
 	}
@@ -360,6 +424,8 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 		appendKeyValuePair(result, HEIGHT_PROPERTY, getHeight());
 		appendKeyValuePair(result, TEXT_CONTENT_PROPERTY, getTextContent());
 		appendKeyValuePair(result, IMAGE_PATH_PROPERTY, getImagePath());
+		appendKeyValuePair(result, PLATFORM_PROPERTY, getPlatform());
+		appendKeyValuePair(result, CREATE_TIME_PROPERTY, getCreateTime());
 		appendKeyValuePair(result, VERSION_PROPERTY, getVersion());
 
 		
@@ -382,6 +448,8 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 			dest.setHeight(getHeight());
 			dest.setTextContent(getTextContent());
 			dest.setImagePath(getImagePath());
+			dest.setPlatform(getPlatform());
+			dest.setCreateTime(getCreateTime());
 			dest.setVersion(getVersion());
 
 		}
@@ -403,6 +471,8 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 			dest.mergeHeight(getHeight());
 			dest.mergeTextContent(getTextContent());
 			dest.mergeImagePath(getImagePath());
+			dest.mergePlatform(getPlatform());
+			dest.mergeCreateTime(getCreateTime());
 			dest.mergeVersion(getVersion());
 
 		}
@@ -421,6 +491,10 @@ public class TargetObject extends BaseEntity implements  java.io.Serializable{
 		stringBuilder.append("\theight='"+getHeight()+"';");
 		stringBuilder.append("\ttextContent='"+getTextContent()+"';");
 		stringBuilder.append("\timagePath='"+getImagePath()+"';");
+		if(getPlatform() != null ){
+ 			stringBuilder.append("\tplatform='Platform("+getPlatform().getId()+")';");
+ 		}
+		stringBuilder.append("\tcreateTime='"+getCreateTime()+"';");
 		stringBuilder.append("\tversion='"+getVersion()+"';");
 		stringBuilder.append("}");
 

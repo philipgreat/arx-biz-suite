@@ -18,10 +18,28 @@ const load = (targetObjectId, parameters) => {
 
 
 
+const requestCandidatePlatform = (ownerClass, id, filterKey, pageNo) => {
+ 
+  const url = `${PREFIX}targetObjectManager/requestCandidatePlatform/ownerClass/id/filterKey/pageNo/`
+  const requestParameters = {id, ownerClass,filterKey, pageNo}
+  return postForm({url,requestParameters})
+}	
+
+const transferToAnotherPlatform = (id, parameters) => {
+  //const parametersExpr = joinParameters(parameters)
+  const url = `${PREFIX}targetObjectManager/transferToAnotherPlatform/id/anotherPlatformId/`
+  const requestParameters = {id, ...parameters}
+  return postForm({url,requestParameters})
+}
+
+
+
 
 
 
 const TargetObjectService = { view,
-  load }
+  load,
+  requestCandidatePlatform,
+  transferToAnotherPlatform }
 export default TargetObjectService
 

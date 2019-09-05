@@ -21,8 +21,10 @@ import com.doublechaintech.arx.ArxUserContext;
 
 
 import com.doublechaintech.arx.viewdevice.ViewDevice;
+import com.doublechaintech.arx.targetobject.TargetObject;
 
 import com.doublechaintech.arx.viewdevice.ViewDeviceDAO;
+import com.doublechaintech.arx.targetobject.TargetObjectDAO;
 
 
 
@@ -31,6 +33,25 @@ import org.springframework.dao.EmptyResultDataAccessException;
 public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements PlatformDAO{
 
 
+			
+		
+	
+  	private  TargetObjectDAO  targetObjectDAO;
+ 	public void setTargetObjectDAO(TargetObjectDAO pTargetObjectDAO){
+ 	
+ 		if(pTargetObjectDAO == null){
+ 			throw new IllegalStateException("Do not try to set targetObjectDAO to null.");
+ 		}
+	 	this.targetObjectDAO = pTargetObjectDAO;
+ 	}
+ 	public TargetObjectDAO getTargetObjectDAO(){
+ 		if(this.targetObjectDAO == null){
+ 			throw new IllegalStateException("The targetObjectDAO is not configured yet, please config it some where.");
+ 		}
+ 		
+	 	return this.targetObjectDAO;
+ 	}	
+ 	
 			
 		
 	
@@ -95,6 +116,13 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 		Platform newPlatform = loadInternalPlatform(accessKey, options);
 		newPlatform.setVersion(0);
 		
+		
+ 		
+ 		if(isSaveTargetObjectListEnabled(options)){
+ 			for(TargetObject item: newPlatform.getTargetObjectList()){
+ 				item.setVersion(0);
+ 			}
+ 		}
 		
  		
  		if(isSaveViewDeviceListEnabled(options)){
@@ -195,6 +223,20 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 
 		
 	
+	protected boolean isExtractTargetObjectListEnabled(Map<String,Object> options){		
+ 		return checkOptions(options,PlatformTokens.TARGET_OBJECT_LIST);
+ 	}
+ 	protected boolean isAnalyzeTargetObjectListEnabled(Map<String,Object> options){		 		
+ 		return PlatformTokens.of(options).analyzeTargetObjectListEnabled();
+ 	}
+	
+	protected boolean isSaveTargetObjectListEnabled(Map<String,Object> options){
+		return checkOptions(options, PlatformTokens.TARGET_OBJECT_LIST);
+		
+ 	}
+ 	
+		
+	
 	protected boolean isExtractViewDeviceListEnabled(Map<String,Object> options){		
  		return checkOptions(options,PlatformTokens.VIEW_DEVICE_LIST);
  	}
@@ -235,6 +277,14 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 		Platform platform = extractPlatform(accessKey, loadOptions);
 
 		
+		if(isExtractTargetObjectListEnabled(loadOptions)){
+	 		extractTargetObjectList(platform, loadOptions);
+ 		}	
+ 		if(isAnalyzeTargetObjectListEnabled(loadOptions)){
+	 		analyzeTargetObjectList(platform, loadOptions);
+ 		}
+ 		
+		
 		if(isExtractViewDeviceListEnabled(loadOptions)){
 	 		extractViewDeviceList(platform, loadOptions);
  		}	
@@ -247,6 +297,56 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 		
 	}
 
+	
+		
+	protected void enhanceTargetObjectList(SmartList<TargetObject> targetObjectList,Map<String,Object> options){
+		//extract multiple list from difference sources
+		//Trying to use a single SQL to extract all data from database and do the work in java side, java is easier to scale to N ndoes;
+	}
+	
+	protected Platform extractTargetObjectList(Platform platform, Map<String,Object> options){
+		
+		
+		if(platform == null){
+			return null;
+		}
+		if(platform.getId() == null){
+			return platform;
+		}
+
+		
+		
+		SmartList<TargetObject> targetObjectList = getTargetObjectDAO().findTargetObjectByPlatform(platform.getId(),options);
+		if(targetObjectList != null){
+			enhanceTargetObjectList(targetObjectList,options);
+			platform.setTargetObjectList(targetObjectList);
+		}
+		
+		return platform;
+	
+	}	
+	
+	protected Platform analyzeTargetObjectList(Platform platform, Map<String,Object> options){
+		
+		
+		if(platform == null){
+			return null;
+		}
+		if(platform.getId() == null){
+			return platform;
+		}
+
+		
+		
+		SmartList<TargetObject> targetObjectList = platform.getTargetObjectList();
+		if(targetObjectList != null){
+			getTargetObjectDAO().analyzeTargetObjectByPlatform(targetObjectList, platform.getId(), options);
+			
+		}
+		
+		return platform;
+	
+	}	
 	
 		
 	protected void enhanceViewDeviceList(SmartList<ViewDevice> viewDeviceList,Map<String,Object> options){
@@ -469,6 +569,13 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 		savePlatform(platform);
 
 		
+		if(isSaveTargetObjectListEnabled(options)){
+	 		saveTargetObjectList(platform, options);
+	 		//removeTargetObjectList(platform, options);
+	 		//Not delete the record
+	 		
+ 		}		
+		
 		if(isSaveViewDeviceListEnabled(options)){
 	 		saveViewDeviceList(platform, options);
 	 		//removeViewDeviceList(platform, options);
@@ -486,6 +593,34 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 	
 
 	
+	public Platform planToRemoveTargetObjectList(Platform platform, String targetObjectIds[], Map<String,Object> options)throws Exception{
+	
+		MultipleAccessKey key = new MultipleAccessKey();
+		key.put(TargetObject.PLATFORM_PROPERTY, platform.getId());
+		key.put(TargetObject.ID_PROPERTY, targetObjectIds);
+		
+		SmartList<TargetObject> externalTargetObjectList = getTargetObjectDAO().
+				findTargetObjectWithKey(key, options);
+		if(externalTargetObjectList == null){
+			return platform;
+		}
+		if(externalTargetObjectList.isEmpty()){
+			return platform;
+		}
+		
+		for(TargetObject targetObject: externalTargetObjectList){
+
+			targetObject.clearFromAll();
+		}
+		
+		
+		SmartList<TargetObject> targetObjectList = platform.getTargetObjectList();		
+		targetObjectList.addAllToRemoveList(externalTargetObjectList);
+		return platform;	
+	
+	}
+
+
 	public Platform planToRemoveViewDeviceList(Platform platform, String viewDeviceIds[], Map<String,Object> options)throws Exception{
 	
 		MultipleAccessKey key = new MultipleAccessKey();
@@ -515,6 +650,72 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 
 
 
+		
+	protected Platform saveTargetObjectList(Platform platform, Map<String,Object> options){
+		
+		
+		
+		
+		SmartList<TargetObject> targetObjectList = platform.getTargetObjectList();
+		if(targetObjectList == null){
+			//null list means nothing
+			return platform;
+		}
+		SmartList<TargetObject> mergedUpdateTargetObjectList = new SmartList<TargetObject>();
+		
+		
+		mergedUpdateTargetObjectList.addAll(targetObjectList); 
+		if(targetObjectList.getToRemoveList() != null){
+			//ensures the toRemoveList is not null
+			mergedUpdateTargetObjectList.addAll(targetObjectList.getToRemoveList());
+			targetObjectList.removeAll(targetObjectList.getToRemoveList());
+			//OK for now, need fix later
+		}
+
+		//adding new size can improve performance
+	
+		getTargetObjectDAO().saveTargetObjectList(mergedUpdateTargetObjectList,options);
+		
+		if(targetObjectList.getToRemoveList() != null){
+			targetObjectList.removeAll(targetObjectList.getToRemoveList());
+		}
+		
+		
+		return platform;
+	
+	}
+	
+	protected Platform removeTargetObjectList(Platform platform, Map<String,Object> options){
+	
+	
+		SmartList<TargetObject> targetObjectList = platform.getTargetObjectList();
+		if(targetObjectList == null){
+			return platform;
+		}	
+	
+		SmartList<TargetObject> toRemoveTargetObjectList = targetObjectList.getToRemoveList();
+		
+		if(toRemoveTargetObjectList == null){
+			return platform;
+		}
+		if(toRemoveTargetObjectList.isEmpty()){
+			return platform;// Does this mean delete all from the parent object?
+		}
+		//Call DAO to remove the list
+		
+		getTargetObjectDAO().removeTargetObjectList(toRemoveTargetObjectList,options);
+		
+		return platform;
+	
+	}
+	
+	
+
+ 	
+ 	
+	
+	
+	
 		
 	protected Platform saveViewDeviceList(Platform platform, Map<String,Object> options){
 		
@@ -585,11 +786,32 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 
 	public Platform present(Platform platform,Map<String, Object> options){
 	
+		presentTargetObjectList(platform,options);
 		presentViewDeviceList(platform,options);
 
 		return platform;
 	
 	}
+		
+	//Using java8 feature to reduce the code significantly
+ 	protected Platform presentTargetObjectList(
+			Platform platform,
+			Map<String, Object> options) {
+
+		SmartList<TargetObject> targetObjectList = platform.getTargetObjectList();		
+				SmartList<TargetObject> newList= presentSubList(platform.getId(),
+				targetObjectList,
+				options,
+				getTargetObjectDAO()::countTargetObjectByPlatform,
+				getTargetObjectDAO()::findTargetObjectByPlatform
+				);
+
+		
+		platform.setTargetObjectList(newList);
+		
+
+		return platform;
+	}			
 		
 	//Using java8 feature to reduce the code significantly
  	protected Platform presentViewDeviceList(
@@ -613,6 +835,12 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 		
 
 	
+    public SmartList<Platform> requestCandidatePlatformForTargetObject(ArxUserContext userContext, String ownerClass, String id, String filterKey, int pageNo, int pageSize) throws Exception {
+        // NOTE: by default, ignore owner info, just return all by filter key.
+		// You need override this method if you have different candidate-logic
+		return findAllCandidateByFilter(PlatformTable.COLUMN_NAME, filterKey, pageNo, pageSize, getPlatformMapper());
+    }
+		
     public SmartList<Platform> requestCandidatePlatformForViewDevice(ArxUserContext userContext, String ownerClass, String id, String filterKey, int pageNo, int pageSize) throws Exception {
         // NOTE: by default, ignore owner info, just return all by filter key.
 		// You need override this method if you have different candidate-logic
@@ -630,6 +858,28 @@ public class PlatformJDBCTemplateDAO extends ArxNamingServiceDAO implements Plat
 		this.enhanceListInternal(platformList, this.getPlatformMapper());
 	}
 	
+	
+	// 需要一个加载引用我的对象的enhance方法:TargetObject的platform的TargetObjectList
+	public void loadOurTargetObjectList(ArxUserContext userContext, List<Platform> us, Map<String,Object> options) throws Exception{
+		if (us == null || us.isEmpty()){
+			return;
+		}
+		Set<String> ids = us.stream().map(it->it.getId()).collect(Collectors.toSet());
+		MultipleAccessKey key = new MultipleAccessKey();
+		key.put(TargetObject.PLATFORM_PROPERTY, ids.toArray(new String[ids.size()]));
+		SmartList<TargetObject> loadedObjs = userContext.getDAOGroup().getTargetObjectDAO().findTargetObjectWithKey(key, options);
+		Map<String, List<TargetObject>> loadedMap = loadedObjs.stream().collect(Collectors.groupingBy(it->it.getPlatform().getId()));
+		us.forEach(it->{
+			String id = it.getId();
+			List<TargetObject> loadedList = loadedMap.get(id);
+			if (loadedList == null || loadedList.isEmpty()) {
+				return;
+			}
+			SmartList<TargetObject> loadedSmartList = new SmartList<>();
+			loadedSmartList.addAll(loadedList);
+			it.setTargetObjectList(loadedSmartList);
+		});
+	}
 	
 	// 需要一个加载引用我的对象的enhance方法:ViewDevice的platform的ViewDeviceList
 	public void loadOurViewDeviceList(ArxUserContext userContext, List<Platform> us, Map<String,Object> options) throws Exception{

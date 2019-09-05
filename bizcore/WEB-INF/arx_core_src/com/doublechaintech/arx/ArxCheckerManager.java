@@ -149,7 +149,15 @@ public class ArxCheckerManager extends BaseManagerImpl {
 	protected void checkImagePathOfTargetObject(ArxUserContext userContext, String imagePath, List<Message> messageList)
 	{
 		
-	 	checkStringLengthRange(imagePath,4, 60,IMAGE_PATH_OF_TARGET_OBJECT, messageList); 		
+	 	checkImage(imagePath,0, 512,IMAGE_PATH_OF_TARGET_OBJECT, messageList); 		
+		
+	}	 			
+	
+	public static final String  PLATFORM_OF_TARGET_OBJECT ="target_object.platform";
+	protected void checkPlatformIdOfTargetObject(ArxUserContext userContext, String platformId, List<Message> messageList)
+	{
+		
+	 	checkIdOfTargetObject(userContext,platformId, messageList); 		
 		
 	}	 			
 	

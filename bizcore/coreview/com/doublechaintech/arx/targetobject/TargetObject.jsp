@@ -126,7 +126,12 @@
 	
 	
 
-	
+	<div class="row">
+<c:set var="platform" value="${ result.platform}" scope="request" />
+<sky:include page="com/doublechaintech/arx/platform/Platform$Info.jsp" />
+
+</div>
+
 
 
 

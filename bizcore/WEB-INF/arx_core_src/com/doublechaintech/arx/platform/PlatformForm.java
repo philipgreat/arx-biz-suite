@@ -68,6 +68,132 @@ public class PlatformForm extends BaseForm {
 
 
 
+	public PlatformForm targetObjectIdFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  idFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm targetObjectIdFieldForTargetObject(String initValue){
+		return targetObjectIdFieldForTargetObject("targetObjectId",initValue);
+	}
+	public PlatformForm targetObjectIdFieldForTargetObject(){
+		return targetObjectIdFieldForTargetObject("targetObjectId","");
+	}
+
+
+	public PlatformForm nameFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  nameFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm nameFieldForTargetObject(String initValue){
+		return nameFieldForTargetObject("name",initValue);
+	}
+	public PlatformForm nameFieldForTargetObject(){
+		return nameFieldForTargetObject("name","");
+	}
+
+
+	public PlatformForm longitudeFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  longitudeFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm longitudeFieldForTargetObject(String initValue){
+		return longitudeFieldForTargetObject("longitude",initValue);
+	}
+	public PlatformForm longitudeFieldForTargetObject(){
+		return longitudeFieldForTargetObject("longitude","");
+	}
+
+
+	public PlatformForm latitudeFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  latitudeFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm latitudeFieldForTargetObject(String initValue){
+		return latitudeFieldForTargetObject("latitude",initValue);
+	}
+	public PlatformForm latitudeFieldForTargetObject(){
+		return latitudeFieldForTargetObject("latitude","");
+	}
+
+
+	public PlatformForm heightFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  heightFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm heightFieldForTargetObject(String initValue){
+		return heightFieldForTargetObject("height",initValue);
+	}
+	public PlatformForm heightFieldForTargetObject(){
+		return heightFieldForTargetObject("height","");
+	}
+
+
+	public PlatformForm textContentFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  textContentFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm textContentFieldForTargetObject(String initValue){
+		return textContentFieldForTargetObject("textContent",initValue);
+	}
+	public PlatformForm textContentFieldForTargetObject(){
+		return textContentFieldForTargetObject("textContent","");
+	}
+
+
+	public PlatformForm imagePathFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  imagePathFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm imagePathFieldForTargetObject(String initValue){
+		return imagePathFieldForTargetObject("imagePath",initValue);
+	}
+	public PlatformForm imagePathFieldForTargetObject(){
+		return imagePathFieldForTargetObject("imagePath","");
+	}
+
+
+	public PlatformForm platformIdFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  platformIdFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm platformIdFieldForTargetObject(String initValue){
+		return platformIdFieldForTargetObject("platformId",initValue);
+	}
+	public PlatformForm platformIdFieldForTargetObject(){
+		return platformIdFieldForTargetObject("platformId","");
+	}
+
+
+	public PlatformForm createTimeFieldForTargetObject(String parameterName, String initValue){
+		FormField field =  createTimeFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm createTimeFieldForTargetObject(String initValue){
+		return createTimeFieldForTargetObject("createTime",initValue);
+	}
+	public PlatformForm createTimeFieldForTargetObject(){
+		return createTimeFieldForTargetObject("createTime","");
+	}
+
+
 	public PlatformForm viewDeviceIdFieldForViewDevice(String parameterName, String initValue){
 		FormField field =  idFromViewDevice(parameterName, initValue);		
 		this.addFormField(field);
@@ -149,6 +275,20 @@ public class PlatformForm extends BaseForm {
 	}
 	public PlatformForm platformIdFieldForViewDevice(){
 		return platformIdFieldForViewDevice("platformId","");
+	}
+
+
+	public PlatformForm createTimeFieldForViewDevice(String parameterName, String initValue){
+		FormField field =  createTimeFromViewDevice(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public PlatformForm createTimeFieldForViewDevice(String initValue){
+		return createTimeFieldForViewDevice("createTime",initValue);
+	}
+	public PlatformForm createTimeFieldForViewDevice(){
+		return createTimeFieldForViewDevice("createTime","");
 	}
 
 	

@@ -187,6 +187,7 @@ public class ViewDeviceManagerImpl extends CustomArxCheckerManager implements Vi
 		viewDevice.setPlatform(platform);
 		
 		
+		viewDevice.setCreateTime(userContext.now());
 
 		viewDevice = saveViewDevice(userContext, viewDevice, emptyOptions());
 		

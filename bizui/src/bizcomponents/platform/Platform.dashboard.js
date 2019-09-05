@@ -117,7 +117,7 @@ class PlatformDashboard extends Component {
 
   render() {
     // eslint-disable-next-line max-len
-    const { id,displayName, viewDeviceListMetaInfo, viewDeviceCount } = this.props.platform
+    const { id,displayName, targetObjectListMetaInfo, viewDeviceListMetaInfo, targetObjectCount, viewDeviceCount } = this.props.platform
     if(!this.props.platform.class){
       return null
     }
@@ -126,6 +126,8 @@ class PlatformDashboard extends Component {
     const cardsData = {cardsName:"平台",cardsFor: "platform",
     	cardsSource: this.props.platform,returnURL,displayName,
   		subItems: [
+{name: 'targetObjectList', displayName:'目标对象',type:'targetObject',count:targetObjectCount,addFunction: true, role: 'targetObject', metaInfo: targetObjectListMetaInfo},
+{name: 'viewDeviceList', displayName:'查看设备',type:'viewDevice',count:viewDeviceCount,addFunction: true, role: 'viewDevice', metaInfo: viewDeviceListMetaInfo},
     
       	],
   	};

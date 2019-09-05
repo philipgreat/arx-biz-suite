@@ -41,6 +41,7 @@ public class ArxBaseViewScope {
 		.field(TargetObject.HEIGHT_PROPERTY)
 		.field(TargetObject.TEXT_CONTENT_PROPERTY)
 		.field(TargetObject.IMAGE_PATH_PROPERTY)
+		.field(TargetObject.CREATE_TIME_PROPERTY)
 		;
 	/** 用于TargetObject的子对象的详情页时需要序列化的属性列表 */
 	public static SerializeScope getTargetObjectSummaryScope() {
@@ -53,6 +54,7 @@ public class ArxBaseViewScope {
 		.field(ViewDevice.LONGITUDE_PROPERTY)
 		.field(ViewDevice.LATITUDE_PROPERTY)
 		.field(ViewDevice.HEIGHT_PROPERTY)
+		.field(ViewDevice.CREATE_TIME_PROPERTY)
 		;
 	/** 用于ViewDevice的子对象的详情页时需要序列化的属性列表 */
 	public static SerializeScope getViewDeviceSummaryScope() {
@@ -250,6 +252,7 @@ public class ArxBaseViewScope {
 		.field(TargetObject.HEIGHT_PROPERTY)
 		.field(TargetObject.TEXT_CONTENT_PROPERTY)
 		.field(TargetObject.IMAGE_PATH_PROPERTY)
+		.field(TargetObject.CREATE_TIME_PROPERTY)
 		;
 	/** 用于TargetObject的父对象的列表时需要序列化的属性列表 */
 	public static SerializeScope getTargetObjectSecondaryListItemScope() {
@@ -262,6 +265,7 @@ public class ArxBaseViewScope {
 		.field(ViewDevice.LONGITUDE_PROPERTY)
 		.field(ViewDevice.LATITUDE_PROPERTY)
 		.field(ViewDevice.HEIGHT_PROPERTY)
+		.field(ViewDevice.CREATE_TIME_PROPERTY)
 		;
 	/** 用于ViewDevice的父对象的列表时需要序列化的属性列表 */
 	public static SerializeScope getViewDeviceSecondaryListItemScope() {
@@ -445,6 +449,7 @@ public class ArxBaseViewScope {
 		.field(Platform.ID_PROPERTY)
 		.field(Platform.NAME_PROPERTY)
 		.field(Platform.DESCRIPTION_PROPERTY)
+		.field(Platform.TARGET_OBJECT_LIST, getTargetObjectSecondaryListItemScope())
 		.field(Platform.VIEW_DEVICE_LIST, getViewDeviceSecondaryListItemScope())
 		;
 	/** 用于Platform对象的列表时需要序列化的属性列表 */
@@ -460,6 +465,8 @@ public class ArxBaseViewScope {
 		.field(TargetObject.HEIGHT_PROPERTY)
 		.field(TargetObject.TEXT_CONTENT_PROPERTY)
 		.field(TargetObject.IMAGE_PATH_PROPERTY)
+		.field(TargetObject.PLATFORM_PROPERTY, getPlatformSummaryScope())
+		.field(TargetObject.CREATE_TIME_PROPERTY)
 		;
 	/** 用于TargetObject对象的列表时需要序列化的属性列表 */
 	public static SerializeScope getTargetObjectListItemScope() {
@@ -473,6 +480,7 @@ public class ArxBaseViewScope {
 		.field(ViewDevice.LATITUDE_PROPERTY)
 		.field(ViewDevice.HEIGHT_PROPERTY)
 		.field(ViewDevice.PLATFORM_PROPERTY, getPlatformSummaryScope())
+		.field(ViewDevice.CREATE_TIME_PROPERTY)
 		;
 	/** 用于ViewDevice对象的列表时需要序列化的属性列表 */
 	public static SerializeScope getViewDeviceListItemScope() {
@@ -678,6 +686,7 @@ public class ArxBaseViewScope {
 		.field(Platform.ID_PROPERTY)
 		.field(Platform.NAME_PROPERTY)
 		.field(Platform.DESCRIPTION_PROPERTY)
+		.field(Platform.TARGET_OBJECT_LIST, getTargetObjectListItemScope())
 		.field(Platform.VIEW_DEVICE_LIST, getViewDeviceListItemScope())
 		;
 	/** 用于Platform对象的详情页时需要序列化的属性列表 */
@@ -693,6 +702,8 @@ public class ArxBaseViewScope {
 		.field(TargetObject.HEIGHT_PROPERTY)
 		.field(TargetObject.TEXT_CONTENT_PROPERTY)
 		.field(TargetObject.IMAGE_PATH_PROPERTY)
+		.field(TargetObject.PLATFORM_PROPERTY, getPlatformSummaryScope())
+		.field(TargetObject.CREATE_TIME_PROPERTY)
 		;
 	/** 用于TargetObject对象的详情页时需要序列化的属性列表 */
 	public static SerializeScope getTargetObjectDetailScope() {
@@ -706,6 +717,7 @@ public class ArxBaseViewScope {
 		.field(ViewDevice.LATITUDE_PROPERTY)
 		.field(ViewDevice.HEIGHT_PROPERTY)
 		.field(ViewDevice.PLATFORM_PROPERTY, getPlatformSummaryScope())
+		.field(ViewDevice.CREATE_TIME_PROPERTY)
 		;
 	/** 用于ViewDevice对象的详情页时需要序列化的属性列表 */
 	public static SerializeScope getViewDeviceDetailScope() {

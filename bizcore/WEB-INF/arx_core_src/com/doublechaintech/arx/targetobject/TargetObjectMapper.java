@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.math.BigDecimal;
 import com.doublechaintech.arx.BaseRowMapper;
+import com.doublechaintech.arx.platform.Platform;
 
 public class TargetObjectMapper extends BaseRowMapper<TargetObject>{
 	
@@ -18,6 +19,8 @@ public class TargetObjectMapper extends BaseRowMapper<TargetObject>{
  		setHeight(targetObject, rs, rowNumber); 		
  		setTextContent(targetObject, rs, rowNumber); 		
  		setImagePath(targetObject, rs, rowNumber); 		
+ 		setPlatform(targetObject, rs, rowNumber); 		
+ 		setCreateTime(targetObject, rs, rowNumber); 		
  		setVersion(targetObject, rs, rowNumber);
 
 		return targetObject;
@@ -110,6 +113,36 @@ public class TargetObjectMapper extends BaseRowMapper<TargetObject>{
 		
 		targetObject.setImagePath(imagePath);
 	}
+		 		
+ 	protected void setPlatform(TargetObject targetObject, ResultSet rs, int rowNumber) throws SQLException{
+ 		String platformId = rs.getString(TargetObjectTable.COLUMN_PLATFORM);
+ 		if( platformId == null){
+ 			return;
+ 		}
+ 		if( platformId.isEmpty()){
+ 			return;
+ 		}
+ 		Platform platform = targetObject.getPlatform();
+ 		if( platform != null ){
+ 			//if the root object 'targetObject' already have the property, just set the id for it;
+ 			platform.setId(platformId);
+ 			
+ 			return;
+ 		}
+ 		targetObject.setPlatform(createEmptyPlatform(platformId));
+ 	}
+ 	
+	protected void setCreateTime(TargetObject targetObject, ResultSet rs, int rowNumber) throws SQLException{
+	
+		//there will be issue when the type is double/int/long
+		Date createTime = rs.getTimestamp(TargetObjectTable.COLUMN_CREATE_TIME);
+		if(createTime == null){
+			//do nothing when nothing found in database
+			return;
+		}
+		
+		targetObject.setCreateTime(convertToDateTime(createTime));
+	}
 		
 	protected void setVersion(TargetObject targetObject, ResultSet rs, int rowNumber) throws SQLException{
 	
@@ -125,6 +158,13 @@ public class TargetObjectMapper extends BaseRowMapper<TargetObject>{
 		
 		
 
+ 	protected Platform  createEmptyPlatform(String platformId){
+ 		Platform platform = new Platform();
+ 		platform.setId(platformId);
+ 		platform.setVersion(Integer.MAX_VALUE);
+ 		return platform;
+ 	}
+ 	
 }
 
 

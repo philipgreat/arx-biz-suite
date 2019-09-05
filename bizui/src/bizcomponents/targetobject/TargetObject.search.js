@@ -63,6 +63,7 @@ const showAssociateDialog = (targetComponent) => {
   
   const {selectedRows} = targetComponent.state
   
+  const { PlatformAssociateForm } = GlobalComponents
 
 
   return (
@@ -70,7 +71,11 @@ const showAssociateDialog = (targetComponent) => {
   
    
   
-    
+    <PlatformAssociateForm 
+	visible={currentAssociateModal==='platform'} 
+	data={{targetObjectList:selectedRows}} owner={owner}  
+	onCancel={()=>toggleAssociateModalVisible(targetComponent,'platform')} 
+	onCreate={()=>toggleAssociateModalVisible(targetComponent,'platform')}/> 
  
 
 

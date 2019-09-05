@@ -101,6 +101,7 @@
 	  <li class="active"><a data-toggle="tab" href="#summary" class="disabled"><i class="fa  fa-home"></i> ${userContext.localeMap['@summary']}</a></li>
 	 
 	<% Platform result = (Platform)request.getAttribute("result");  %>
+			<li><a data-toggle="tab" href="#targetObjectList" class="disabled"> ${userContext.localeMap['target_object']}</a></li>
 			<li><a data-toggle="tab" href="#viewDeviceList" class="disabled"> ${userContext.localeMap['view_device']}</a></li>
  
 	</ul>
@@ -145,7 +146,15 @@
 
 	
 
-		<c:if test='${not empty userContext.accessTokens["viewDeviceList"] or ignoreListAccessControl}'>
+		<c:if test='${not empty userContext.accessTokens["targetObjectList"] or ignoreListAccessControl}'>
+		<c:set var="targetObjectList" value="${result.targetObjectList}" scope="request"/>
+		<c:set var="targetObjectListName" value="targetObjectList" scope="request"/>
+		<div id="targetObjectList" class="tab-pane fade sublist" refer-name="platform">
+			<sky:include page="com/doublechaintech/arx/targetobject/TargetObject$List.jsp"
+					referName="platform"/>
+		</div>
+	</c:if>
+	<c:if test='${not empty userContext.accessTokens["viewDeviceList"] or ignoreListAccessControl}'>
 		<c:set var="viewDeviceList" value="${result.viewDeviceList}" scope="request"/>
 		<c:set var="viewDeviceListName" value="viewDeviceList" scope="request"/>
 		<div id="viewDeviceList" class="tab-pane fade sublist" refer-name="platform">

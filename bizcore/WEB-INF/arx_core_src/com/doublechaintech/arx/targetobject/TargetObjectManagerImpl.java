@@ -20,7 +20,9 @@ import com.doublechaintech.arx.ArxUserContext;
 import com.doublechaintech.arx.ArxCheckerManager;
 import com.doublechaintech.arx.CustomArxCheckerManager;
 
+import com.doublechaintech.arx.platform.Platform;
 
+import com.doublechaintech.arx.platform.CandidatePlatform;
 
 
 
@@ -146,6 +148,7 @@ public class TargetObjectManagerImpl extends CustomArxCheckerManager implements 
 		addAction(userContext, targetObject, tokens,"@update","updateTargetObject","updateTargetObject/"+targetObject.getId()+"/","main","primary");
 		addAction(userContext, targetObject, tokens,"@copy","cloneTargetObject","cloneTargetObject/"+targetObject.getId()+"/","main","primary");
 		
+		addAction(userContext, targetObject, tokens,"target_object.transfer_to_platform","transferToAnotherPlatform","transferToAnotherPlatform/"+targetObject.getId()+"/","main","primary");
 	
 		
 		
@@ -158,7 +161,7 @@ public class TargetObjectManagerImpl extends CustomArxCheckerManager implements 
  	
 
 
-	public TargetObject createTargetObject(ArxUserContext userContext,String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath) throws Exception
+	public TargetObject createTargetObject(ArxUserContext userContext,String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath, String platformId) throws Exception
 	{
 		
 		
@@ -183,6 +186,12 @@ public class TargetObjectManagerImpl extends CustomArxCheckerManager implements 
 		targetObject.setHeight(height);
 		targetObject.setTextContent(textContent);
 		targetObject.setImagePath(imagePath);
+			
+		Platform platform = loadPlatform(userContext, platformId,emptyOptions());
+		targetObject.setPlatform(platform);
+		
+		
+		targetObject.setCreateTime(userContext.now());
 
 		targetObject = saveTargetObject(userContext, targetObject, emptyOptions());
 		
@@ -224,7 +233,9 @@ public class TargetObjectManagerImpl extends CustomArxCheckerManager implements 
 		}
 		if(TargetObject.IMAGE_PATH_PROPERTY.equals(property)){
 			userContext.getChecker().checkImagePathOfTargetObject(parseString(newValueExpr));
-		}
+		}		
+
+		
 	
 		userContext.getChecker().throwExceptionIfHasErrors(TargetObjectManagerException.class);
 	
@@ -329,7 +340,66 @@ public class TargetObjectManagerImpl extends CustomArxCheckerManager implements 
 		return TargetObjectTokens.mergeAll(tokens).done();
 	}
 	
-//--------------------------------------------------------------
+	protected void checkParamsForTransferingAnotherPlatform(ArxUserContext userContext, String targetObjectId, String anotherPlatformId) throws Exception
+ 	{
+ 		
+ 		userContext.getChecker().checkIdOfTargetObject(targetObjectId);
+ 		userContext.getChecker().checkIdOfPlatform(anotherPlatformId);//check for optional reference
+ 		userContext.getChecker().throwExceptionIfHasErrors(TargetObjectManagerException.class);
+ 		
+ 	}
+ 	public TargetObject transferToAnotherPlatform(ArxUserContext userContext, String targetObjectId, String anotherPlatformId) throws Exception
+ 	{
+ 		checkParamsForTransferingAnotherPlatform(userContext, targetObjectId,anotherPlatformId);
+ 
+		TargetObject targetObject = loadTargetObject(userContext, targetObjectId, allTokens());	
+		synchronized(targetObject){
+			//will be good when the targetObject loaded from this JVM process cache.
+			//also good when there is a ram based DAO implementation
+			Platform platform = loadPlatform(userContext, anotherPlatformId, emptyOptions());		
+			targetObject.updatePlatform(platform);		
+			targetObject = saveTargetObject(userContext, targetObject, emptyOptions());
+			
+			return present(userContext,targetObject, allTokens());
+			
+		}
+
+ 	}
+ 	
+	 	
+ 	
+ 	
+	public CandidatePlatform requestCandidatePlatform(ArxUserContext userContext, String ownerClass, String id, String filterKey, int pageNo) throws Exception {
+
+		CandidatePlatform result = new CandidatePlatform();
+		result.setOwnerClass(ownerClass);
+		result.setOwnerId(id);
+		result.setFilterKey(filterKey==null?"":filterKey.trim());
+		result.setPageNo(pageNo);
+		result.setValueFieldName("id");
+		result.setDisplayFieldName("name");
+		
+		pageNo = Math.max(1, pageNo);
+		int pageSize = 20;
+		//requestCandidateProductForSkuAsOwner
+		SmartList<Platform> candidateList = userContext.getDAOGroup().getPlatformDAO().requestCandidatePlatformForTargetObject(userContext,ownerClass, id, filterKey, pageNo, pageSize);
+		result.setCandidates(candidateList);
+		int totalCount = candidateList.getTotalCount();
+		result.setTotalPage(Math.max(1, (totalCount + pageSize -1)/pageSize ));
+		return result;
+	}
+ 	
+ //--------------------------------------------------------------
+	
+	 	
+ 	protected Platform loadPlatform(ArxUserContext userContext, String newPlatformId, Map<String,Object> options) throws Exception
+ 	{
+		
+ 		return userContext.getDAOGroup().getPlatformDAO().load(newPlatformId, options);
+ 	}
+ 	
+ 	
+ 	
 	
 	//--------------------------------------------------------------
 

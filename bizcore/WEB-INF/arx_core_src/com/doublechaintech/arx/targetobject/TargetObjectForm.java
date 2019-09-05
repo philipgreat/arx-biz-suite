@@ -117,15 +117,95 @@ public class TargetObjectForm extends BaseForm {
 		return imagePathField("imagePath","");
 	}
 
+
+	public TargetObjectForm platformIdField(String parameterName, String initValue){
+		FormField field = platformIdFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public TargetObjectForm platformIdField(String initValue){
+		return platformIdField("platformId",initValue);
+	}
+	public TargetObjectForm platformIdField(){
+		return platformIdField("platformId","");
+	}
+
+
+	public TargetObjectForm createTimeField(String parameterName, String initValue){
+		FormField field = createTimeFromTargetObject(parameterName, initValue);		
+		this.addFormField(field);
+		return this;
+	}
+	
+	public TargetObjectForm createTimeField(String initValue){
+		return createTimeField("createTime",initValue);
+	}
+	public TargetObjectForm createTimeField(){
+		return createTimeField("createTime","");
+	}
+
 	
 	
 
+
+	public TargetObjectForm platformIdFieldOfPlatform(String parameterName, String initValue){
+		FormField field =  idFromPlatform(parameterName, initValue);
+		this.addFormField(field);	
+		return this;
+	}
+	
+	public TargetObjectForm platformIdFieldOfPlatform(String initValue){
+		return platformIdFieldOfPlatform("platformId",initValue);
+	}
+	public TargetObjectForm platformIdFieldOfPlatform(){
+		return platformIdFieldOfPlatform("platformId","");
+	}
+
+
+	public TargetObjectForm nameFieldOfPlatform(String parameterName, String initValue){
+		FormField field =  nameFromPlatform(parameterName, initValue);
+		this.addFormField(field);	
+		return this;
+	}
+	
+	public TargetObjectForm nameFieldOfPlatform(String initValue){
+		return nameFieldOfPlatform("name",initValue);
+	}
+	public TargetObjectForm nameFieldOfPlatform(){
+		return nameFieldOfPlatform("name","");
+	}
+
+
+	public TargetObjectForm descriptionFieldOfPlatform(String parameterName, String initValue){
+		FormField field =  descriptionFromPlatform(parameterName, initValue);
+		this.addFormField(field);	
+		return this;
+	}
+	
+	public TargetObjectForm descriptionFieldOfPlatform(String initValue){
+		return descriptionFieldOfPlatform("description",initValue);
+	}
+	public TargetObjectForm descriptionFieldOfPlatform(){
+		return descriptionFieldOfPlatform("description","");
+	}
+
 	
 
 
 	
 
+	
+ 	public TargetObjectForm transferToAnotherPlatformAction(){
+		FormAction action = new FormAction();
+		action.setLabel("显示");
+		action.setLocaleKey("show");
+		action.setUrl("transferToAnotherPlatform/targetObjectId/");
+		this.addFormAction(action);
+		return this;
+	}
 
+ 
 
 	public TargetObjectForm showAction(){
 		FormAction action = new FormAction();

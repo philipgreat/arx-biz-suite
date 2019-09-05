@@ -34,7 +34,7 @@ const internalSummaryOf = (targetObject,targetComponent) =>{
 <Description term="纬度">{targetObject.latitude}</Description> 
 <Description term="高度">{targetObject.height}</Description> 
 <Description term="文本内容">{targetObject.textContent}</Description> 
-<Description term="图片路径">{targetObject.imagePath}</Description> 
+<Description term="创建时间">{ moment(targetObject.createTime).format('YYYY-MM-DD')}</Description> 
 	
       </DescriptionList>
 	)

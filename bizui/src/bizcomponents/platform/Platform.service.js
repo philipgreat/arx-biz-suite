@@ -22,6 +22,28 @@ const load = (targetObjectId, parameters) => {
 
 
 
+const addTargetObject = (targetObjectId, parameters) => {
+  const url = `${PREFIX}platformManager/addTargetObject/platformId/name/longitude/latitude/height/textContent/imagePath/tokensExpr/`
+  const platformId = targetObjectId
+  const requestParameters = { ...parameters, platformId, tokensExpr: 'none' }
+  return postForm({ url,requestParameters})
+}
+
+const updateTargetObject = (targetObjectId, parameters) => {
+  const url = `${PREFIX}platformManager/updateTargetObjectProperties/platformId/id/name/longitude/latitude/height/textContent/imagePath/tokensExpr/`
+  const platformId = targetObjectId
+  const requestParameters = { ...parameters, platformId, tokensExpr: 'none' }
+  return postForm({ url,requestParameters})
+}
+
+const removeTargetObjectList = (targetObjectId, parameters) => {
+  const url = `${PREFIX}platformManager/removeTargetObjectList/platformId/targetObjectIds/tokensExpr/`
+  const requestParameters = { ...parameters, platformId: targetObjectId, tokensExpr: 'none' }
+  return postForm({ url,requestParameters})
+}
+
+
+
 const addViewDevice = (targetObjectId, parameters) => {
   const url = `${PREFIX}platformManager/addViewDevice/platformId/name/longitude/latitude/height/tokensExpr/`
   const platformId = targetObjectId
@@ -45,8 +67,11 @@ const removeViewDeviceList = (targetObjectId, parameters) => {
 
 const PlatformService = { view,
   load,
+  addTargetObject,
   addViewDevice,
+  updateTargetObject,
   updateViewDevice,
+  removeTargetObjectList,
   removeViewDeviceList }
 export default PlatformService
 

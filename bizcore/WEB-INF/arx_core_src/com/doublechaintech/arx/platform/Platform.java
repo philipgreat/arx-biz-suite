@@ -12,6 +12,7 @@ import com.doublechaintech.arx.KeyValuePair;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.doublechaintech.arx.viewdevice.ViewDevice;
+import com.doublechaintech.arx.targetobject.TargetObject;
 
 @JsonSerialize(using = PlatformSerializer.class)
 public class Platform extends BaseEntity implements  java.io.Serializable{
@@ -22,6 +23,7 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 	public static final String DESCRIPTION_PROPERTY           = "description"       ;
 	public static final String VERSION_PROPERTY               = "version"           ;
 
+	public static final String TARGET_OBJECT_LIST                       = "targetObjectList"  ;
 	public static final String VIEW_DEVICE_LIST                         = "viewDeviceList"    ;
 
 	public static final String INTERNAL_TYPE="Platform";
@@ -49,6 +51,7 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 	protected		int                 	mVersion            ;
 	
 	
+	protected		SmartList<TargetObject>	mTargetObjectList   ;
 	protected		SmartList<ViewDevice>	mViewDeviceList     ;
 	
 		
@@ -66,6 +69,7 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 		setName(name);
 		setDescription(description);
 
+		this.mTargetObjectList = new SmartList<TargetObject>();
 		this.mViewDeviceList = new SmartList<ViewDevice>();	
 	}
 	
@@ -184,6 +188,113 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 	
 	
 
+	public  SmartList<TargetObject> getTargetObjectList(){
+		if(this.mTargetObjectList == null){
+			this.mTargetObjectList = new SmartList<TargetObject>();
+			this.mTargetObjectList.setListInternalName (TARGET_OBJECT_LIST );
+			//有名字，便于做权限控制
+		}
+		
+		return this.mTargetObjectList;	
+	}
+	public  void setTargetObjectList(SmartList<TargetObject> targetObjectList){
+		for( TargetObject targetObject:targetObjectList){
+			targetObject.setPlatform(this);
+		}
+
+		this.mTargetObjectList = targetObjectList;
+		this.mTargetObjectList.setListInternalName (TARGET_OBJECT_LIST );
+		
+	}
+	
+	public  void addTargetObject(TargetObject targetObject){
+		targetObject.setPlatform(this);
+		getTargetObjectList().add(targetObject);
+	}
+	public  void addTargetObjectList(SmartList<TargetObject> targetObjectList){
+		for( TargetObject targetObject:targetObjectList){
+			targetObject.setPlatform(this);
+		}
+		getTargetObjectList().addAll(targetObjectList);
+	}
+	public  void mergeTargetObjectList(SmartList<TargetObject> targetObjectList){
+		if(targetObjectList==null){
+			return;
+		}
+		if(targetObjectList.isEmpty()){
+			return;
+		}
+		addTargetObjectList( targetObjectList );
+		
+	}
+	public  TargetObject removeTargetObject(TargetObject targetObjectIndex){
+		
+		int index = getTargetObjectList().indexOf(targetObjectIndex);
+        if(index < 0){
+        	String message = "TargetObject("+targetObjectIndex.getId()+") with version='"+targetObjectIndex.getVersion()+"' NOT found!";
+            throw new IllegalStateException(message);
+        }
+        TargetObject targetObject = getTargetObjectList().get(index);        
+        // targetObject.clearPlatform(); //disconnect with Platform
+        targetObject.clearFromAll(); //disconnect with Platform
+		
+		boolean result = getTargetObjectList().planToRemove(targetObject);
+        if(!result){
+        	String message = "TargetObject("+targetObjectIndex.getId()+") with version='"+targetObjectIndex.getVersion()+"' NOT found!";
+            throw new IllegalStateException(message);
+        }
+        return targetObject;
+        
+	
+	}
+	//断舍离
+	public  void breakWithTargetObject(TargetObject targetObject){
+		
+		if(targetObject == null){
+			return;
+		}
+		targetObject.setPlatform(null);
+		//getTargetObjectList().remove();
+	
+	}
+	
+	public  boolean hasTargetObject(TargetObject targetObject){
+	
+		return getTargetObjectList().contains(targetObject);
+  
+	}
+	
+	public void copyTargetObjectFrom(TargetObject targetObject) {
+
+		TargetObject targetObjectInList = findTheTargetObject(targetObject);
+		TargetObject newTargetObject = new TargetObject();
+		targetObjectInList.copyTo(newTargetObject);
+		newTargetObject.setVersion(0);//will trigger copy
+		getTargetObjectList().add(newTargetObject);
+		addItemToFlexiableObject(COPIED_CHILD, newTargetObject);
+	}
+	
+	public  TargetObject findTheTargetObject(TargetObject targetObject){
+		
+		int index =  getTargetObjectList().indexOf(targetObject);
+		//The input parameter must have the same id and version number.
+		if(index < 0){
+ 			String message = "TargetObject("+targetObject.getId()+") with version='"+targetObject.getVersion()+"' NOT found!";
+			throw new IllegalStateException(message);
+		}
+		
+		return  getTargetObjectList().get(index);
+		//Performance issue when using LinkedList, but it is almost an ArrayList for sure!
+	}
+	
+	public  void cleanUpTargetObjectList(){
+		getTargetObjectList().clear();
+	}
+	
+	
+	
+
+
 	public  SmartList<ViewDevice> getViewDeviceList(){
 		if(this.mViewDeviceList == null){
 			this.mViewDeviceList = new SmartList<ViewDevice>();
@@ -300,6 +411,7 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 	public List<BaseEntity>  collectRefercencesFromLists(String internalType){
 		
 		List<BaseEntity> entityList = new ArrayList<BaseEntity>();
+		collectFromList(this, entityList, getTargetObjectList(), internalType);
 		collectFromList(this, entityList, getViewDeviceList(), internalType);
 
 		return entityList;
@@ -308,6 +420,7 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 	public  List<SmartList<?>> getAllRelatedLists() {
 		List<SmartList<?>> listOfList = new ArrayList<SmartList<?>>();
 		
+		listOfList.add( getTargetObjectList());
 		listOfList.add( getViewDeviceList());
 			
 
@@ -322,6 +435,11 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 		appendKeyValuePair(result, NAME_PROPERTY, getName());
 		appendKeyValuePair(result, DESCRIPTION_PROPERTY, getDescription());
 		appendKeyValuePair(result, VERSION_PROPERTY, getVersion());
+		appendKeyValuePair(result, TARGET_OBJECT_LIST, getTargetObjectList());
+		if(!getTargetObjectList().isEmpty()){
+			appendKeyValuePair(result, "targetObjectCount", getTargetObjectList().getTotalCount());
+			appendKeyValuePair(result, "targetObjectCurrentPageNumber", getTargetObjectList().getCurrentPageNumber());
+		}
 		appendKeyValuePair(result, VIEW_DEVICE_LIST, getViewDeviceList());
 		if(!getViewDeviceList().isEmpty()){
 			appendKeyValuePair(result, "viewDeviceCount", getViewDeviceList().getTotalCount());
@@ -345,6 +463,7 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 			dest.setName(getName());
 			dest.setDescription(getDescription());
 			dest.setVersion(getVersion());
+			dest.setTargetObjectList(getTargetObjectList());
 			dest.setViewDeviceList(getViewDeviceList());
 
 		}
@@ -363,6 +482,7 @@ public class Platform extends BaseEntity implements  java.io.Serializable{
 			dest.mergeName(getName());
 			dest.mergeDescription(getDescription());
 			dest.mergeVersion(getVersion());
+			dest.mergeTargetObjectList(getTargetObjectList());
 			dest.mergeViewDeviceList(getViewDeviceList());
 
 		}

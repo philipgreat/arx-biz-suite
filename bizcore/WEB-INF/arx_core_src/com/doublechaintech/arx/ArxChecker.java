@@ -117,7 +117,16 @@ public class ArxChecker extends BaseChecker{
 	public ArxChecker checkImagePathOfTargetObject(String imagePath)
 	{
 		
-	 	checkStringLengthRange(imagePath,4, 60,IMAGE_PATH_OF_TARGET_OBJECT ); 		
+	 	checkImage(imagePath,0, 512,IMAGE_PATH_OF_TARGET_OBJECT ); 		
+		
+		return this;
+	}	 			
+
+	public static final String  PLATFORM_OF_TARGET_OBJECT ="target_object.platform";
+	public ArxChecker checkPlatformIdOfTargetObject(String platformId)
+	{
+		
+	 	checkIdOfTargetObject(platformId ); 		
 		
 		return this;
 	}	 			

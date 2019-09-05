@@ -18,15 +18,16 @@ const testValues = {};
 /*
 const testValues = {
   name: '目标对象',
-  longitude: '103.84722444917794',
-  latitude: '32.42930572351415',
+  longitude: '105.91176875888102',
+  latitude: '32.5364605630995',
   height: '10000',
   textContent: '测试目标',
-  imagePath: 'ban-400-300-red',
+  platformId: 'P000001',
 }
 */
 
 const imageKeys = [
+  'imagePath',
 ]
 
 
@@ -256,16 +257,6 @@ class TargetObjectCreateForm extends Component {
                 </Form.Item>
               </Col>
 
-              <Col lg={12} md={12} sm={24}>
-                <Form.Item label={fieldLabels.imagePath} {...formItemLayout}>
-                  {getFieldDecorator('imagePath', {
-                    rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
-                  })(
-                    <Input size="large" placeholder="图片路径" />
-                  )}
-                </Form.Item>
-              </Col>
-
             </Row>
           </Form>
         </Card>
@@ -281,7 +272,49 @@ class TargetObjectCreateForm extends Component {
 
 
 
+        <Card title={appLocaleName(userContext,"Attachment")} className={styles.card} bordered={false}>
+          <Form >
+            <Row gutter={16}>
 
+              <Col lg={6} md={12} sm={24}>
+                <ImageComponent
+                  buttonTitle="图片路径"
+                  handlePreview={this.handlePreview}
+                  handleChange={event => this.handleChange(event, 'imagePath')}
+                  fileList={convertedImagesValues.imagePath}
+                />
+              </Col>
+
+            </Row>
+          </Form>
+        </Card>
+
+
+
+        <Card title={appLocaleName(userContext,"Associate")} className={styles.card} bordered={false}>
+          <Form >
+            <Row gutter={16}>
+
+              <Col lg={12} md={12} sm={24}>
+                <Form.Item label={fieldLabels.platform} {...formItemLayout}>
+                  {getFieldDecorator('platformId', {
+                  	initialValue: tryinit('platform'),
+                    rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
+                  })(
+                  
+                  <SelectObject 
+                    disabled={!availableForEdit('platform')}
+                    targetType={"platform"} 
+                    requestFunction={TargetObjectService.requestCandidatePlatform}/>
+                  
+                 
+                  )}
+                </Form.Item>
+              </Col>
+
+            </Row>
+          </Form>  
+        </Card>
 
         <FooterToolbar>
           {getErrorInfo()}

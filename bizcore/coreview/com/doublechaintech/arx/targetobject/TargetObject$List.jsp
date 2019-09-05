@@ -116,6 +116,12 @@
 <c:if test="${param.referName ne 'imagePath'}">
 	<th>${userContext.localeMap['target_object.image_path']}</th>
 </c:if>
+<c:if test="${param.referName ne 'platform'}">
+	<th>${userContext.localeMap['target_object.platform']}</th>
+</c:if>
+<c:if test="${param.referName ne 'createTime'}">
+	<th>${userContext.localeMap['target_object.create_time']}</th>
+</c:if>
 <th>${userContext.localeMap['@action']}</th>
 		</tr></thead>
 		<tbody>
@@ -128,6 +134,26 @@
 </c:if><c:if test="${param.referName ne 'height'}">	<td contenteditable='true' class='edit-value'  propertyToChange='height' storedCellValue='${item.height}' prefix='${ownerBeanName}Manager/updateTargetObject/${result.id}/${item.id}/'>${item.height}</td>
 </c:if><c:if test="${param.referName ne 'textContent'}">	<td contenteditable='true' class='edit-value'  propertyToChange='textContent' storedCellValue='${item.textContent}' prefix='${ownerBeanName}Manager/updateTargetObject/${result.id}/${item.id}/'>${item.textContent}</td>
 </c:if><c:if test="${param.referName ne 'imagePath'}">	<td contenteditable='true' class='edit-value'  propertyToChange='imagePath' storedCellValue='${item.imagePath}' prefix='${ownerBeanName}Manager/updateTargetObject/${result.id}/${item.id}/'>${item.imagePath}</td>
+</c:if><c:if test="${param.referName ne 'platform'}">
+	<td class="select_candidate_td"
+			data-candidate-method="./targetObjectManager/requestCandidatePlatform/${ownerBeanName}/${item.id}/"
+			data-switch-method="./targetObjectManager/transferToAnotherPlatform/${item.id}/"
+			data-link-template="./platformManager/view/${'$'}{ID}/">
+		<span class="display_span">
+			<c:if test="${not empty  item.platform}">
+			<a href='./platformManager/view/${item.platform.id}/'>${item.platform.displayName}</a>
+			</c:if>
+			<c:if test="${empty  item.platform}">
+			<a href='#'></a>
+			</c:if>
+			<button class="btn btn-link candidate-action">...</button>
+		</span>
+		<div class="candidate_span" style="display:none;">
+			<input type="text" data-provide="typeahead" class="input-sm form-control candidate-filter-input" autocomplete="off" />
+		</div>
+	</td>
+</c:if>
+<c:if test="${param.referName ne 'createTime'}">	<td contenteditable='true' class='edit-value'  propertyToChange='createTime' storedCellValue='${item.createTime}' prefix='${ownerBeanName}Manager/updateTargetObject/${result.id}/${item.id}/'><fmt:formatDate pattern="yyyy-MM-dd'T'HH:mm:ss" value="${item.createTime}" /></td>
 </c:if>
 				<td>
 

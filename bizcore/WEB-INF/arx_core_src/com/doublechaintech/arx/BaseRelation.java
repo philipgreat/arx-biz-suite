@@ -109,6 +109,9 @@ public class BaseRelation{
 	{
 		
 		
+		String [] targetObjectRelatedObjectNames = {"platform:Platform"};
+		addRelationIndex("TargetObject",targetObjectRelatedObjectNames);
+
 		String [] viewDeviceRelatedObjectNames = {"platform:Platform"};
 		addRelationIndex("ViewDevice",viewDeviceRelatedObjectNames);
 
@@ -162,6 +165,7 @@ public class BaseRelation{
 	//default for reading trust chain, the default sequence are MXWR, the order is not affect the result
 	protected void prepareRelation()
 	{
+		addGenericRelation("TargetObject"                          ,TRUST_CHAIN_READ,"platform");
 		addGenericRelation("ViewDevice"                            ,TRUST_CHAIN_READ,"platform");
 		addGenericRelation("UserWhiteList"                         ,TRUST_CHAIN_READ,"domain");
 		addGenericRelation("SecUser"                               ,TRUST_CHAIN_READ,"domain");

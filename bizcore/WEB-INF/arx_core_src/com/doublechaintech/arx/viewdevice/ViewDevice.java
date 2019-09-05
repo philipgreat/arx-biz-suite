@@ -23,6 +23,7 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 	public static final String LATITUDE_PROPERTY              = "latitude"          ;
 	public static final String HEIGHT_PROPERTY                = "height"            ;
 	public static final String PLATFORM_PROPERTY              = "platform"          ;
+	public static final String CREATE_TIME_PROPERTY           = "createTime"        ;
 	public static final String VERSION_PROPERTY               = "version"           ;
 
 
@@ -51,6 +52,7 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 	protected		BigDecimal          	mLatitude           ;
 	protected		int                 	mHeight             ;
 	protected		Platform            	mPlatform           ;
+	protected		DateTime            	mCreateTime         ;
 	protected		int                 	mVersion            ;
 	
 	
@@ -66,13 +68,14 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 		this.changed = true;
 	}
 	
-	public 	ViewDevice(String name, BigDecimal longitude, BigDecimal latitude, int height, Platform platform)
+	public 	ViewDevice(String name, BigDecimal longitude, BigDecimal latitude, int height, Platform platform, DateTime createTime)
 	{
 		setName(name);
 		setLongitude(longitude);
 		setLatitude(latitude);
 		setHeight(height);
 		setPlatform(platform);
+		setCreateTime(createTime);
 	
 	}
 	
@@ -91,6 +94,9 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 		}
 		if(HEIGHT_PROPERTY.equals(property)){
 			changeHeightProperty(newValueExpr);
+		}
+		if(CREATE_TIME_PROPERTY.equals(property)){
+			changeCreateTimeProperty(newValueExpr);
 		}
 
       
@@ -151,6 +157,21 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 		//they are surely different each other
 		updateHeight(newValue);
 		this.onChangeProperty(HEIGHT_PROPERTY, oldValue, newValue);
+		return;
+  
+	}
+			
+			
+			
+	protected void changeCreateTimeProperty(String newValueExpr){
+		DateTime oldValue = getCreateTime();
+		DateTime newValue = parseTimestamp(newValueExpr);
+		if(equalsTimestamp(oldValue , newValue)){
+			return;//they can be both null, or exact the same object, this is much faster than equals function
+		}
+		//they are surely different each other
+		updateCreateTime(newValue);
+		this.onChangeProperty(CREATE_TIME_PROPERTY, oldValue, newValue);
 		return;
   
 	}
@@ -263,6 +284,22 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 		this.changed = true;
 	}
 	
+	public void setCreateTime(DateTime createTime){
+		this.mCreateTime = createTime;;
+	}
+	public DateTime getCreateTime(){
+		return this.mCreateTime;
+	}
+	public ViewDevice updateCreateTime(DateTime createTime){
+		this.mCreateTime = createTime;;
+		this.changed = true;
+		return this;
+	}
+	public void mergeCreateTime(DateTime createTime){
+		setCreateTime(createTime);
+	}
+	
+	
 	public void setVersion(int version){
 		this.mVersion = version;;
 	}
@@ -312,6 +349,7 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 		appendKeyValuePair(result, LATITUDE_PROPERTY, getLatitude());
 		appendKeyValuePair(result, HEIGHT_PROPERTY, getHeight());
 		appendKeyValuePair(result, PLATFORM_PROPERTY, getPlatform());
+		appendKeyValuePair(result, CREATE_TIME_PROPERTY, getCreateTime());
 		appendKeyValuePair(result, VERSION_PROPERTY, getVersion());
 
 		
@@ -333,6 +371,7 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 			dest.setLatitude(getLatitude());
 			dest.setHeight(getHeight());
 			dest.setPlatform(getPlatform());
+			dest.setCreateTime(getCreateTime());
 			dest.setVersion(getVersion());
 
 		}
@@ -353,6 +392,7 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 			dest.mergeLatitude(getLatitude());
 			dest.mergeHeight(getHeight());
 			dest.mergePlatform(getPlatform());
+			dest.mergeCreateTime(getCreateTime());
 			dest.mergeVersion(getVersion());
 
 		}
@@ -372,6 +412,7 @@ public class ViewDevice extends BaseEntity implements  java.io.Serializable{
 		if(getPlatform() != null ){
  			stringBuilder.append("\tplatform='Platform("+getPlatform().getId()+")';");
  		}
+		stringBuilder.append("\tcreateTime='"+getCreateTime()+"';");
 		stringBuilder.append("\tversion='"+getVersion()+"';");
 		stringBuilder.append("}");
 

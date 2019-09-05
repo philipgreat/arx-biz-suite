@@ -113,6 +113,9 @@
 <c:if test="${param.referName ne 'platform'}">
 	<th>${userContext.localeMap['view_device.platform']}</th>
 </c:if>
+<c:if test="${param.referName ne 'createTime'}">
+	<th>${userContext.localeMap['view_device.create_time']}</th>
+</c:if>
 <th>${userContext.localeMap['@action']}</th>
 		</tr></thead>
 		<tbody>
@@ -142,7 +145,8 @@
 		</div>
 	</td>
 </c:if>
-
+<c:if test="${param.referName ne 'createTime'}">	<td contenteditable='true' class='edit-value'  propertyToChange='createTime' storedCellValue='${item.createTime}' prefix='${ownerBeanName}Manager/updateViewDevice/${result.id}/${item.id}/'><fmt:formatDate pattern="yyyy-MM-dd'T'HH:mm:ss" value="${item.createTime}" /></td>
+</c:if>
 				<td>
 
 				<a href='#${ownerBeanName}Manager/removeViewDevice/${result.id}/${item.id}/' class='delete-action btn btn-danger btn-xs'><i class="fa fa-trash-o fa-lg"></i> ${userContext.localeMap['@delete']}</a>

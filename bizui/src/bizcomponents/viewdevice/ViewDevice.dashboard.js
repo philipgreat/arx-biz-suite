@@ -86,6 +86,7 @@ const internalSummaryOf = (viewDevice,targetComponent) =>{
 <Description term="经度">{viewDevice.longitude}</Description> 
 <Description term="纬度">{viewDevice.latitude}</Description> 
 <Description term="高度">{viewDevice.height}</Description> 
+<Description term="创建时间">{ moment(viewDevice.createTime).format('YYYY-MM-DD')}</Description> 
 	
         {buildTransferModal(viewDevice,targetComponent)}
       </DescriptionList>

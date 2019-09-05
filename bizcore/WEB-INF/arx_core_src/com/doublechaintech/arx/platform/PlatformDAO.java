@@ -8,6 +8,7 @@ import com.doublechaintech.arx.SmartList;
 import com.doublechaintech.arx.MultipleAccessKey;
 import com.doublechaintech.arx.ArxUserContext;
 import com.doublechaintech.arx.viewdevice.ViewDeviceDAO;
+import com.doublechaintech.arx.targetobject.TargetObjectDAO;
 
 
 public interface PlatformDAO{
@@ -38,12 +39,19 @@ public interface PlatformDAO{
 	public Platform disconnectFromAll(String platformId, int version) throws Exception;
 	public int deleteAll() throws Exception;
 
+	public TargetObjectDAO getTargetObjectDAO();
+		
 	public ViewDeviceDAO getViewDeviceDAO();
 		
 	
+ 	public SmartList<Platform> requestCandidatePlatformForTargetObject(ArxUserContext userContext, String ownerClass, String id, String filterKey, int pageNo, int pageSize) throws Exception;
+		
  	public SmartList<Platform> requestCandidatePlatformForViewDevice(ArxUserContext userContext, String ownerClass, String id, String filterKey, int pageNo, int pageSize) throws Exception;
 		
 	
+	public Platform planToRemoveTargetObjectList(Platform platform, String targetObjectIds[], Map<String,Object> options)throws Exception;
+
+
 	public Platform planToRemoveViewDeviceList(Platform platform, String viewDeviceIds[], Map<String,Object> options)throws Exception;
 
 

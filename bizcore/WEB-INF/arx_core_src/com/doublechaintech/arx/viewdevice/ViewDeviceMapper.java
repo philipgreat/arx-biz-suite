@@ -18,6 +18,7 @@ public class ViewDeviceMapper extends BaseRowMapper<ViewDevice>{
  		setLatitude(viewDevice, rs, rowNumber); 		
  		setHeight(viewDevice, rs, rowNumber); 		
  		setPlatform(viewDevice, rs, rowNumber); 		
+ 		setCreateTime(viewDevice, rs, rowNumber); 		
  		setVersion(viewDevice, rs, rowNumber);
 
 		return viewDevice;
@@ -105,6 +106,18 @@ public class ViewDeviceMapper extends BaseRowMapper<ViewDevice>{
  		viewDevice.setPlatform(createEmptyPlatform(platformId));
  	}
  	
+	protected void setCreateTime(ViewDevice viewDevice, ResultSet rs, int rowNumber) throws SQLException{
+	
+		//there will be issue when the type is double/int/long
+		Date createTime = rs.getTimestamp(ViewDeviceTable.COLUMN_CREATE_TIME);
+		if(createTime == null){
+			//do nothing when nothing found in database
+			return;
+		}
+		
+		viewDevice.setCreateTime(convertToDateTime(createTime));
+	}
+		
 	protected void setVersion(ViewDevice viewDevice, ResultSet rs, int rowNumber) throws SQLException{
 	
 		//there will be issue when the type is double/int/long

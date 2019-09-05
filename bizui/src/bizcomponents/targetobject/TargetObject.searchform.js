@@ -132,7 +132,7 @@ componentDidMount() {
 		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'id'))
 		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'name'))
 		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'textContent'))
-		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'contains', 'imagePath'))
+		pushIfNotNull(paramList,this.buildStringSearchParameters(fieldsValue,'eq', 'platform'))
 
      
       console.log("the final parameter", paramList)
@@ -267,14 +267,21 @@ componentDidMount() {
               )}
             </FormItem>
           </Col>
-
-          <Col md={8} sm={24}>
-            <FormItem label="图片路径">
-              {getFieldDecorator('imagePath')(
-                <Input size="large" placeholder={appLocaleName(userContext,"PleaseInput")} />
-              )}
-            </FormItem>
-          </Col>
+ <Col md={8} sm={24}>
+                    <Form.Item label="平台">
+                  {getFieldDecorator('platform', {
+                    initialValue: tryinit('platform'),
+                   
+                  })(
+                  
+                  <SelectObject 
+                    disabled={!availableForEdit('platform')}
+                    targetType={"platform"} 
+                    requestFunction={TargetObjectService.requestCandidatePlatform}/>
+                  
+                 
+                  )}
+                </Form.Item></Col>
 
         </Row>
         <div style={{ overflow: 'hidden' }}>

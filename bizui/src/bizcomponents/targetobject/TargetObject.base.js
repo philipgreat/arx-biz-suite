@@ -4,7 +4,9 @@ import { Link } from 'dva/router'
 import moment from 'moment'
 import ImagePreview from '../../components/ImagePreview'
 import appLocaleName from '../../common/Locale.tool'
-import BaseTool from '../../common/Base.tool';
+import BaseTool from '../../common/Base.tool'
+import GlobalComponents from '../../custcomponents'
+import DescriptionList from '../../components/DescriptionList'
 
 const {
 	defaultRenderReferenceCell,
@@ -33,19 +35,6 @@ const menuData = {menuName:"目标对象", menuFor: "targetObject",
   		],
 }
 
-
-
-const displayColumns = [
-  { title: 'ID', debugtype: 'string', dataIndex: 'id', width: '20',render: (text, record)=>renderTextCell(text,record) },
-  { title: '名称', debugtype: 'string', dataIndex: 'name', width: '8',render: (text, record)=>renderTextCell(text,record) },
-  { title: '经度', debugtype: 'double', dataIndex: 'longitude', width: '12',render: (text, record)=>renderTextCell(text,record) },
-  { title: '纬度', debugtype: 'double', dataIndex: 'latitude', width: '11',render: (text, record)=>renderTextCell(text,record) },
-  { title: '高度', debugtype: 'int', dataIndex: 'height', width: '9',render: (text, record)=>renderTextCell(text,record) },
-  { title: '文本内容', debugtype: 'string', dataIndex: 'textContent', width: '8',render: (text, record)=>renderTextCell(text,record) },
-  { title: '图片路径', debugtype: 'string', dataIndex: 'imagePath', width: '19',render: (text, record)=>renderTextCell(text,record) },
-
-]
-
 const fieldLabels = {
   id: 'ID',
   name: '名称',
@@ -54,11 +43,50 @@ const fieldLabels = {
   height: '高度',
   textContent: '文本内容',
   imagePath: '图片路径',
+  platform: '平台',
+  createTime: '创建时间',
 
 }
 
+const displayColumns = [
+  { title: fieldLabels.id, debugtype: 'string', dataIndex: 'id', width: '20',render: (text, record)=>renderTextCell(text,record) },
+  { title: fieldLabels.name, debugtype: 'string', dataIndex: 'name', width: '8',render: (text, record)=>renderTextCell(text,record) },
+  { title: fieldLabels.longitude, debugtype: 'double', dataIndex: 'longitude', width: '12',render: (text, record)=>renderTextCell(text,record) },
+  { title: fieldLabels.latitude, debugtype: 'double', dataIndex: 'latitude', width: '11',render: (text, record)=>renderTextCell(text,record) },
+  { title: fieldLabels.height, debugtype: 'int', dataIndex: 'height', width: '9',render: (text, record)=>renderTextCell(text,record) },
+  { title: fieldLabels.textContent, debugtype: 'string', dataIndex: 'textContent', width: '8',render: (text, record)=>renderTextCell(text,record) },
+  { title: fieldLabels.imagePath, dataIndex: 'imagePath', render: (text, record) => renderImageCell(text,record,'图片路径') },
+  { title: fieldLabels.platform, dataIndex: 'platform', render: (text, record) => renderReferenceCell(text, record)},
+  { title: fieldLabels.createTime, dataIndex: 'createTime', render: (text, record) =>renderDateTimeCell(text,record)  },
 
-const TargetObjectBase={menuData,displayColumns,fieldLabels}
+]
+// refernce to https://ant.design/components/list-cn/
+const renderItemOfList=({targetObject,targetComponent})=>{
+
+	
+	
+	const {TargetObjectService} = GlobalComponents
+	// const userContext = null
+	return (
+	<DescriptionList className={styles.headerList} size="small" col="4">
+<Description term="ID">{targetObject.id}</Description> 
+<Description term="名称">{targetObject.name}</Description> 
+<Description term="经度">{targetObject.longitude}</Description> 
+<Description term="纬度">{targetObject.latitude}</Description> 
+<Description term="高度">{targetObject.height}</Description> 
+<Description term="文本内容">{targetObject.textContent}</Description> 
+<Description term="创建时间">{ moment(targetObject.createTime).format('YYYY-MM-DD')}</Description> 
+	
+        {buildTransferModal(targetObject,targetComponent)}
+      </DescriptionList>
+	)
+
+}
+	
+
+
+
+const TargetObjectBase={menuData,displayColumns,fieldLabels,renderItemOfList}
 export default TargetObjectBase
 
 

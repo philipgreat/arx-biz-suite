@@ -59,11 +59,10 @@ class PlatformProfile extends Component {
   render() {
     // eslint-disable-next-line max-len
     const  platform = this.props.platform;
-    const { id,displayName, viewDeviceCount } = platform
+    const { id,displayName, targetObjectCount, viewDeviceCount } = platform
 
     const cardsData = {cardsName:"平台",cardsFor: "platform",cardsSource: platform,
   		subItems: [
-{name: 'viewDeviceList', displayName:'查看设备',type:'viewDevice',count:viewDeviceCount,addFunction: true, role: 'viewDevice', data: platform.viewDeviceList},
     
       	],
   	};

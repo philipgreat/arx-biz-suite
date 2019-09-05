@@ -1,7 +1,7 @@
 
 
 
-=================Execute Report (Model Time 190423T1833) @Tue Apr 23 18:34:25 CST 2019, 16 objects and 125 fields===========================
+=================Execute Report (Model Time 190507T1634) @Tue May 07 16:34:15 CST 2019, 16 objects and 128 fields===========================
 
 
 
@@ -9,6 +9,12 @@
 
 
  processing: target_object
+
+
+ processing: target_object.platform.platform
+
+Info: Add virtual field [target_objects(es)] to <platform>
+	target_object.platform
 
 
  processing: view_device
@@ -29,34 +35,38 @@ platform{
 		string_longtext	description('text()'), verb: false, required: true;
 		int	version('2147483647'), verb: false, required: true;
 	}
-	references field(1){
+	references field(2){
+		targetObjectList	platform(__no_group)--platform;
 		viewDeviceList	platform(__no_group)--platform;
 	}
 } depth=0; isRoot = true
 
 target_object{
-	fields(8){
+	fields(10){
 		string	id('ABCDEFGIJK000001'), verb: false, required: true;
 		string	name('目标对象'), verb: false, required: true;
 		double	longitude('104.0668'), verb: false, required: true;
 		double	latitude('30.5728'), verb: false, required: true;
 		int	height('10000|20000|30000|40000'), verb: false, required: true;
 		string	text_content('测试目标'), verb: false, required: true;
-		string	image_path('ban-400-300-red'), verb: false, required: true;
+		string_image	image_path('ban-400-300-red.jpg'), verb: false, required: true;
+		platform	platform('$(object)'), verb: false, required: true, referenceBy: targetObjectList;
+		date_time_create	create_time('createTime()'), verb: false, required: true;
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(0){
 	}
-} depth=0; isRoot = true
+} depth=1; isRoot = false
 
 view_device{
-	fields(7){
+	fields(8){
 		string	id('ABCDEFGIJK000001'), verb: false, required: true;
 		string	name('测试设备'), verb: false, required: true;
 		double	longitude('104.0668'), verb: false, required: true;
 		double	latitude('30.5728'), verb: false, required: true;
 		int	height('10000|20000|30000|40000'), verb: false, required: true;
 		platform	platform('$(object)'), verb: false, required: true, referenceBy: viewDeviceList;
+		date_time_create	create_time('createTime()'), verb: false, required: true;
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(0){
@@ -70,34 +80,38 @@ platform{
 		string_longtext	description('text()'), verb: false, required: true;
 		int	version('2147483647'), verb: false, required: true;
 	}
-	references field(1){
+	references field(2){
+		targetObjectList	platform(__no_group)--platform;
 		viewDeviceList	platform(__no_group)--platform;
 	}
 } depth=0; isRoot = true
 
 target_object{
-	fields(8){
+	fields(10){
 		string	id('ABCDEFGIJK000001'), verb: false, required: true;
 		string	name('目标对象'), verb: false, required: true;
 		double	longitude('104.0668'), verb: false, required: true;
 		double	latitude('30.5728'), verb: false, required: true;
 		int	height('10000|20000|30000|40000'), verb: false, required: true;
 		string	text_content('测试目标'), verb: false, required: true;
-		string	image_path('ban-400-300-red'), verb: false, required: true;
+		string_image	image_path('ban-400-300-red.jpg'), verb: false, required: true;
+		platform	platform('$(object)'), verb: false, required: true, referenceBy: targetObjectList;
+		date_time_create	create_time('createTime()'), verb: false, required: true;
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(0){
 	}
-} depth=0; isRoot = true
+} depth=1; isRoot = false
 
 view_device{
-	fields(7){
+	fields(8){
 		string	id('ABCDEFGIJK000001'), verb: false, required: true;
 		string	name('测试设备'), verb: false, required: true;
 		double	longitude('104.0668'), verb: false, required: true;
 		double	latitude('30.5728'), verb: false, required: true;
 		int	height('10000|20000|30000|40000'), verb: false, required: true;
 		platform	platform('$(object)'), verb: false, required: true, referenceBy: viewDeviceList;
+		date_time_create	create_time('createTime()'), verb: false, required: true;
 		int	version('2147483647'), verb: false, required: true;
 	}
 	references field(0){

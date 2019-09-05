@@ -26,6 +26,7 @@
 <li><span>${userContext.localeMap['target_object.height']}</span> ${targetObject.height}</li>
 <li><span>${userContext.localeMap['target_object.text_content']}</span> ${targetObject.textContent}</li>
 <li><span>${userContext.localeMap['target_object.image_path']}</span> ${targetObject.imagePath}</li>
+<li><span>${userContext.localeMap['target_object.create_time']}</span> <fmt:formatDate pattern="yyyy-MM-dd" value="${targetObject.createTime}" /></li>
 
 	
 	</ul>

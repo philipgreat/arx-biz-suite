@@ -21,6 +21,7 @@ import com.doublechaintech.arx.ArxCheckerManager;
 import com.doublechaintech.arx.CustomArxCheckerManager;
 
 import com.doublechaintech.arx.viewdevice.ViewDevice;
+import com.doublechaintech.arx.targetobject.TargetObject;
 
 
 import com.doublechaintech.arx.platform.Platform;
@@ -148,6 +149,10 @@ public class PlatformManagerImpl extends CustomArxCheckerManager implements Plat
 		addAction(userContext, platform, tokens,"@update","updatePlatform","updatePlatform/"+platform.getId()+"/","main","primary");
 		addAction(userContext, platform, tokens,"@copy","clonePlatform","clonePlatform/"+platform.getId()+"/","main","primary");
 		
+		addAction(userContext, platform, tokens,"platform.addTargetObject","addTargetObject","addTargetObject/"+platform.getId()+"/","targetObjectList","primary");
+		addAction(userContext, platform, tokens,"platform.removeTargetObject","removeTargetObject","removeTargetObject/"+platform.getId()+"/","targetObjectList","primary");
+		addAction(userContext, platform, tokens,"platform.updateTargetObject","updateTargetObject","updateTargetObject/"+platform.getId()+"/","targetObjectList","primary");
+		addAction(userContext, platform, tokens,"platform.copyTargetObjectFrom","copyTargetObjectFrom","copyTargetObjectFrom/"+platform.getId()+"/","targetObjectList","primary");
 		addAction(userContext, platform, tokens,"platform.addViewDevice","addViewDevice","addViewDevice/"+platform.getId()+"/","viewDeviceList","primary");
 		addAction(userContext, platform, tokens,"platform.removeViewDevice","removeViewDevice","removeViewDevice/"+platform.getId()+"/","viewDeviceList","primary");
 		addAction(userContext, platform, tokens,"platform.updateViewDevice","updateViewDevice","updateViewDevice/"+platform.getId()+"/","viewDeviceList","primary");
@@ -308,6 +313,7 @@ public class PlatformManagerImpl extends CustomArxCheckerManager implements Plat
 	}
 	protected Map<String,Object> viewTokens(){
 		return tokens().allTokens()
+		.sortTargetObjectListWith("id","desc")
 		.sortViewDeviceListWith("id","desc")
 		.analyzeAllLists().done();
 
@@ -362,6 +368,286 @@ public class PlatformManagerImpl extends CustomArxCheckerManager implements Plat
 	
 	
 	
+
+	protected void checkParamsForAddingTargetObject(ArxUserContext userContext, String platformId, String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath,String [] tokensExpr) throws Exception{
+		
+		
+
+		
+		
+		userContext.getChecker().checkIdOfPlatform(platformId);
+
+		
+		userContext.getChecker().checkNameOfTargetObject(name);
+		
+		userContext.getChecker().checkLongitudeOfTargetObject(longitude);
+		
+		userContext.getChecker().checkLatitudeOfTargetObject(latitude);
+		
+		userContext.getChecker().checkHeightOfTargetObject(height);
+		
+		userContext.getChecker().checkTextContentOfTargetObject(textContent);
+		
+		userContext.getChecker().checkImagePathOfTargetObject(imagePath);
+	
+		userContext.getChecker().throwExceptionIfHasErrors(PlatformManagerException.class);
+
+	
+	}
+	public  Platform addTargetObject(ArxUserContext userContext, String platformId, String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath, String [] tokensExpr) throws Exception
+	{	
+		
+		checkParamsForAddingTargetObject(userContext,platformId,name, longitude, latitude, height, textContent, imagePath,tokensExpr);
+		
+		TargetObject targetObject = createTargetObject(userContext,name, longitude, latitude, height, textContent, imagePath);
+		
+		Platform platform = loadPlatform(userContext, platformId, allTokens());
+		synchronized(platform){ 
+			//Will be good when the platform loaded from this JVM process cache.
+			//Also good when there is a RAM based DAO implementation
+			platform.addTargetObject( targetObject );		
+			platform = savePlatform(userContext, platform, tokens().withTargetObjectList().done());
+			
+			userContext.getManagerGroup().getTargetObjectManager().onNewInstanceCreated(userContext, targetObject);
+			return present(userContext,platform, mergedAllTokens(tokensExpr));
+		}
+	}
+	protected void checkParamsForUpdatingTargetObjectProperties(ArxUserContext userContext, String platformId,String id,String name,BigDecimal longitude,BigDecimal latitude,int height,String textContent,String imagePath,String [] tokensExpr) throws Exception {
+		
+		userContext.getChecker().checkIdOfPlatform(platformId);
+		userContext.getChecker().checkIdOfTargetObject(id);
+		
+		userContext.getChecker().checkNameOfTargetObject( name);
+		userContext.getChecker().checkLongitudeOfTargetObject( longitude);
+		userContext.getChecker().checkLatitudeOfTargetObject( latitude);
+		userContext.getChecker().checkHeightOfTargetObject( height);
+		userContext.getChecker().checkTextContentOfTargetObject( textContent);
+		userContext.getChecker().checkImagePathOfTargetObject( imagePath);
+
+		userContext.getChecker().throwExceptionIfHasErrors(PlatformManagerException.class);
+		
+	}
+	public  Platform updateTargetObjectProperties(ArxUserContext userContext, String platformId, String id,String name,BigDecimal longitude,BigDecimal latitude,int height,String textContent,String imagePath, String [] tokensExpr) throws Exception
+	{	
+		checkParamsForUpdatingTargetObjectProperties(userContext,platformId,id,name,longitude,latitude,height,textContent,imagePath,tokensExpr);
+
+		Map<String, Object> options = tokens()
+				.allTokens()
+				//.withTargetObjectListList()
+				.searchTargetObjectListWith(TargetObject.ID_PROPERTY, "is", id).done();
+		
+		Platform platformToUpdate = loadPlatform(userContext, platformId, options);
+		
+		if(platformToUpdate.getTargetObjectList().isEmpty()){
+			throw new PlatformManagerException("TargetObject is NOT FOUND with id: '"+id+"'");
+		}
+		
+		TargetObject item = platformToUpdate.getTargetObjectList().first();
+		
+		item.updateName( name );
+		item.updateLongitude( longitude );
+		item.updateLatitude( latitude );
+		item.updateHeight( height );
+		item.updateTextContent( textContent );
+		item.updateImagePath( imagePath );
+
+		
+		//checkParamsForAddingTargetObject(userContext,platformId,name, code, used,tokensExpr);
+		Platform platform = savePlatform(userContext, platformToUpdate, tokens().withTargetObjectList().done());
+		synchronized(platform){ 
+			return present(userContext,platform, mergedAllTokens(tokensExpr));
+		}
+	}
+	
+	
+	protected TargetObject createTargetObject(ArxUserContext userContext, String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath) throws Exception{
+
+		TargetObject targetObject = new TargetObject();
+		
+		
+		targetObject.setName(name);		
+		targetObject.setLongitude(longitude);		
+		targetObject.setLatitude(latitude);		
+		targetObject.setHeight(height);		
+		targetObject.setTextContent(textContent);		
+		targetObject.setImagePath(imagePath);		
+		targetObject.setCreateTime(userContext.now());
+	
+		
+		return targetObject;
+	
+		
+	}
+	
+	protected TargetObject createIndexedTargetObject(String id, int version){
+
+		TargetObject targetObject = new TargetObject();
+		targetObject.setId(id);
+		targetObject.setVersion(version);
+		return targetObject;			
+		
+	}
+	
+	protected void checkParamsForRemovingTargetObjectList(ArxUserContext userContext, String platformId, 
+			String targetObjectIds[],String [] tokensExpr) throws Exception {
+		
+		userContext.getChecker().checkIdOfPlatform(platformId);
+		for(String targetObjectId: targetObjectIds){
+			userContext.getChecker().checkIdOfTargetObject(targetObjectId);
+		}
+		
+		userContext.getChecker().throwExceptionIfHasErrors(PlatformManagerException.class);
+		
+	}
+	public  Platform removeTargetObjectList(ArxUserContext userContext, String platformId, 
+			String targetObjectIds[],String [] tokensExpr) throws Exception{
+			
+			checkParamsForRemovingTargetObjectList(userContext, platformId,  targetObjectIds, tokensExpr);
+			
+			
+			Platform platform = loadPlatform(userContext, platformId, allTokens());
+			synchronized(platform){ 
+				//Will be good when the platform loaded from this JVM process cache.
+				//Also good when there is a RAM based DAO implementation
+				userContext.getDAOGroup().getPlatformDAO().planToRemoveTargetObjectList(platform, targetObjectIds, allTokens());
+				platform = savePlatform(userContext, platform, tokens().withTargetObjectList().done());
+				deleteRelationListInGraph(userContext, platform.getTargetObjectList());
+				return present(userContext,platform, mergedAllTokens(tokensExpr));
+			}
+	}
+	
+	protected void checkParamsForRemovingTargetObject(ArxUserContext userContext, String platformId, 
+		String targetObjectId, int targetObjectVersion,String [] tokensExpr) throws Exception{
+		
+		userContext.getChecker().checkIdOfPlatform( platformId);
+		userContext.getChecker().checkIdOfTargetObject(targetObjectId);
+		userContext.getChecker().checkVersionOfTargetObject(targetObjectVersion);
+		userContext.getChecker().throwExceptionIfHasErrors(PlatformManagerException.class);
+	
+	}
+	public  Platform removeTargetObject(ArxUserContext userContext, String platformId, 
+		String targetObjectId, int targetObjectVersion,String [] tokensExpr) throws Exception{
+		
+		checkParamsForRemovingTargetObject(userContext,platformId, targetObjectId, targetObjectVersion,tokensExpr);
+		
+		TargetObject targetObject = createIndexedTargetObject(targetObjectId, targetObjectVersion);
+		Platform platform = loadPlatform(userContext, platformId, allTokens());
+		synchronized(platform){ 
+			//Will be good when the platform loaded from this JVM process cache.
+			//Also good when there is a RAM based DAO implementation
+			platform.removeTargetObject( targetObject );		
+			platform = savePlatform(userContext, platform, tokens().withTargetObjectList().done());
+			deleteRelationInGraph(userContext, targetObject);
+			return present(userContext,platform, mergedAllTokens(tokensExpr));
+		}
+		
+		
+	}
+	protected void checkParamsForCopyingTargetObject(ArxUserContext userContext, String platformId, 
+		String targetObjectId, int targetObjectVersion,String [] tokensExpr) throws Exception{
+		
+		userContext.getChecker().checkIdOfPlatform( platformId);
+		userContext.getChecker().checkIdOfTargetObject(targetObjectId);
+		userContext.getChecker().checkVersionOfTargetObject(targetObjectVersion);
+		userContext.getChecker().throwExceptionIfHasErrors(PlatformManagerException.class);
+	
+	}
+	public  Platform copyTargetObjectFrom(ArxUserContext userContext, String platformId, 
+		String targetObjectId, int targetObjectVersion,String [] tokensExpr) throws Exception{
+		
+		checkParamsForCopyingTargetObject(userContext,platformId, targetObjectId, targetObjectVersion,tokensExpr);
+		
+		TargetObject targetObject = createIndexedTargetObject(targetObjectId, targetObjectVersion);
+		Platform platform = loadPlatform(userContext, platformId, allTokens());
+		synchronized(platform){ 
+			//Will be good when the platform loaded from this JVM process cache.
+			//Also good when there is a RAM based DAO implementation
+			
+			
+			
+			platform.copyTargetObjectFrom( targetObject );		
+			platform = savePlatform(userContext, platform, tokens().withTargetObjectList().done());
+			
+			userContext.getManagerGroup().getTargetObjectManager().onNewInstanceCreated(userContext, (TargetObject)platform.getFlexiableObjects().get(BaseEntity.COPIED_CHILD));
+			return present(userContext,platform, mergedAllTokens(tokensExpr));
+		}
+		
+	}
+	
+	protected void checkParamsForUpdatingTargetObject(ArxUserContext userContext, String platformId, String targetObjectId, int targetObjectVersion, String property, String newValueExpr,String [] tokensExpr) throws Exception{
+		
+
+		
+		userContext.getChecker().checkIdOfPlatform(platformId);
+		userContext.getChecker().checkIdOfTargetObject(targetObjectId);
+		userContext.getChecker().checkVersionOfTargetObject(targetObjectVersion);
+		
+
+		if(TargetObject.NAME_PROPERTY.equals(property)){
+			userContext.getChecker().checkNameOfTargetObject(parseString(newValueExpr));
+		}
+		
+		if(TargetObject.LONGITUDE_PROPERTY.equals(property)){
+			userContext.getChecker().checkLongitudeOfTargetObject(parseBigDecimal(newValueExpr));
+		}
+		
+		if(TargetObject.LATITUDE_PROPERTY.equals(property)){
+			userContext.getChecker().checkLatitudeOfTargetObject(parseBigDecimal(newValueExpr));
+		}
+		
+		if(TargetObject.HEIGHT_PROPERTY.equals(property)){
+			userContext.getChecker().checkHeightOfTargetObject(parseInt(newValueExpr));
+		}
+		
+		if(TargetObject.TEXT_CONTENT_PROPERTY.equals(property)){
+			userContext.getChecker().checkTextContentOfTargetObject(parseString(newValueExpr));
+		}
+		
+		if(TargetObject.IMAGE_PATH_PROPERTY.equals(property)){
+			userContext.getChecker().checkImagePathOfTargetObject(parseString(newValueExpr));
+		}
+		
+	
+		userContext.getChecker().throwExceptionIfHasErrors(PlatformManagerException.class);
+	
+	}
+	
+	public  Platform updateTargetObject(ArxUserContext userContext, String platformId, String targetObjectId, int targetObjectVersion, String property, String newValueExpr,String [] tokensExpr)
+			throws Exception{
+		
+		checkParamsForUpdatingTargetObject(userContext, platformId, targetObjectId, targetObjectVersion, property, newValueExpr,  tokensExpr);
+		
+		Map<String,Object> loadTokens = this.tokens().withTargetObjectList().searchTargetObjectListWith(TargetObject.ID_PROPERTY, "eq", targetObjectId).done();
+		
+		
+		
+		Platform platform = loadPlatform(userContext, platformId, loadTokens);
+		
+		synchronized(platform){ 
+			//Will be good when the platform loaded from this JVM process cache.
+			//Also good when there is a RAM based DAO implementation
+			//platform.removeTargetObject( targetObject );	
+			//make changes to AcceleraterAccount.
+			TargetObject targetObjectIndex = createIndexedTargetObject(targetObjectId, targetObjectVersion);
+		
+			TargetObject targetObject = platform.findTheTargetObject(targetObjectIndex);
+			if(targetObject == null){
+				throw new PlatformManagerException(targetObject+" is NOT FOUND" );
+			}
+			
+			targetObject.changeProperty(property, newValueExpr);
+			
+			platform = savePlatform(userContext, platform, tokens().withTargetObjectList().done());
+			return present(userContext,platform, mergedAllTokens(tokensExpr));
+		}
+
+	}
+	/*
+
+	*/
+	
+
+
 
 	protected void checkParamsForAddingViewDevice(ArxUserContext userContext, String platformId, String name, BigDecimal longitude, BigDecimal latitude, int height,String [] tokensExpr) throws Exception{
 		
@@ -454,7 +740,8 @@ public class PlatformManagerImpl extends CustomArxCheckerManager implements Plat
 		viewDevice.setName(name);		
 		viewDevice.setLongitude(longitude);		
 		viewDevice.setLatitude(latitude);		
-		viewDevice.setHeight(height);
+		viewDevice.setHeight(height);		
+		viewDevice.setCreateTime(userContext.now());
 	
 		
 		return viewDevice;

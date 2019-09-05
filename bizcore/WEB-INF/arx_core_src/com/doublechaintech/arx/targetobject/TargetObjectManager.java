@@ -12,13 +12,14 @@ public interface TargetObjectManager{
 
 		
 
-	public TargetObject createTargetObject(ArxUserContext userContext, String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath) throws Exception;	
+	public TargetObject createTargetObject(ArxUserContext userContext, String name, BigDecimal longitude, BigDecimal latitude, int height, String textContent, String imagePath, String platformId) throws Exception;	
 	public TargetObject updateTargetObject(ArxUserContext userContext,String targetObjectId, int targetObjectVersion, String property, String newValueExpr,String [] tokensExpr) throws Exception;
 	public TargetObject loadTargetObject(ArxUserContext userContext, String targetObjectId, String [] tokensExpr) throws Exception;
 	public TargetObject internalSaveTargetObject(ArxUserContext userContext, TargetObject targetObject) throws Exception;
 	public TargetObject internalSaveTargetObject(ArxUserContext userContext, TargetObject targetObject,Map<String,Object>option) throws Exception;
 	
-
+	public TargetObject transferToAnotherPlatform(ArxUserContext userContext, String targetObjectId, String anotherPlatformId)  throws Exception;
+ 
 
 	public void delete(ArxUserContext userContext, String targetObjectId, int version) throws Exception;
 	public int deleteAll(ArxUserContext userContext, String secureCode ) throws Exception;

@@ -162,6 +162,55 @@ class PlatformBizApp extends React.PureComponent {
 
 
 
+  getTargetObjectSearch = () => {
+    const {TargetObjectSearch} = GlobalComponents;
+    const userContext = null
+    return connect(state => ({
+      rule: state.rule,
+      name: "目标对象",
+      role: "targetObject",
+      data: state._platform.targetObjectList,
+      metaInfo: state._platform.targetObjectListMetaInfo,
+      count: state._platform.targetObjectCount,
+      currentPage: state._platform.targetObjectCurrentPageNumber,
+      searchFormParameters: state._platform.targetObjectSearchFormParameters,
+      searchParameters: {...state._platform.searchParameters},
+      expandForm: state._platform.expandForm,
+      loading: state._platform.loading,
+      partialList: state._platform.partialList,
+      owner: { type: '_platform', id: state._platform.id, 
+      referenceName: 'platform', 
+      listName: 'targetObjectList', ref:state._platform, 
+      listDisplayName: appLocaleName(userContext,"List") }, // this is for model namespace and
+    }))(TargetObjectSearch)
+  }
+  getTargetObjectCreateForm = () => {
+   	const {TargetObjectCreateForm} = GlobalComponents;
+   	const userContext = null
+    return connect(state => ({
+      rule: state.rule,
+      role: "targetObject",
+      data: state._platform.targetObjectList,
+      metaInfo: state._platform.targetObjectListMetaInfo,
+      count: state._platform.targetObjectCount,
+      currentPage: state._platform.targetObjectCurrentPageNumber,
+      searchFormParameters: state._platform.targetObjectSearchFormParameters,
+      loading: state._platform.loading,
+      owner: { type: '_platform', id: state._platform.id, referenceName: 'platform', listName: 'targetObjectList', ref:state._platform, listDisplayName: appLocaleName(userContext,"List")}, // this is for model namespace and
+    }))(TargetObjectCreateForm)
+  }
+  
+  getTargetObjectUpdateForm = () => {
+    const userContext = null
+  	const {TargetObjectUpdateForm} = GlobalComponents;
+    return connect(state => ({
+      selectedRows: state._platform.selectedRows,
+      role: "targetObject",
+      currentUpdateIndex: state._platform.currentUpdateIndex,
+      owner: { type: '_platform', id: state._platform.id, listName: 'targetObjectList', ref:state._platform, listDisplayName: appLocaleName(userContext,"List") }, // this is for model namespace and
+    }))(TargetObjectUpdateForm)
+  }
+
   getViewDeviceSearch = () => {
     const {ViewDeviceSearch} = GlobalComponents;
     const userContext = null
@@ -226,6 +275,10 @@ class PlatformBizApp extends React.PureComponent {
   	
   	
   	
+  	{path:"/platform/:id/list/targetObjectList", component: this.getTargetObjectSearch()},
+  	{path:"/platform/:id/list/targetObjectCreateForm", component: this.getTargetObjectCreateForm()},
+  	{path:"/platform/:id/list/targetObjectUpdateForm", component: this.getTargetObjectUpdateForm()},
+   	
   	{path:"/platform/:id/list/viewDeviceList", component: this.getViewDeviceSearch()},
   	{path:"/platform/:id/list/viewDeviceCreateForm", component: this.getViewDeviceCreateForm()},
   	{path:"/platform/:id/list/viewDeviceUpdateForm", component: this.getViewDeviceUpdateForm()},

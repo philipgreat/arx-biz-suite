@@ -1,7 +1,7 @@
 
 export const SYSTEM_SHORT_NAME = "arx" //Use for requssting different apps
 export const SYSTEM_LOCAL_NAME = "ARX" 
-export const BUILD_TIIME="Tue Apr 23 18:34:27 CST 2019"
+export const BUILD_TIIME="Tue May 07 16:34:16 CST 2019"
 export const MEDIA_UPLOAD_URL="https://www.doublechaintech.com/mss/upload.html"
 export const MEDIA_PREFIX="https://www.doublechaintech.com/mss/"
 

@@ -203,9 +203,35 @@ public class BaseForm extends GenericForm{
 		field.setParameterName(parameterName);
 		field.setDefaultValue(initValue);
 		field.setFieldGroup("基本信息");
-		field.setType("text");
+		field.setType("image");
 		field.setRequired(true);
 		field.setPlaceholder("请填写图片路径");
+		return field;
+	}
+
+	protected FormField platformIdFromTargetObject(String parameterName, String initValue){
+		FormField field = new FormField();
+		field.setLabel("平台");
+		field.setLocaleKey("target_object.platform");
+		field.setParameterName(parameterName);
+		field.setDefaultValue(initValue);
+		field.setFieldGroup("基本信息");
+		field.setType("Platform");
+		field.setRequired(true);
+		field.setPlaceholder("请填写平台");
+		return field;
+	}
+
+	protected FormField createTimeFromTargetObject(String parameterName, String initValue){
+		FormField field = new FormField();
+		field.setLabel("创建时间");
+		field.setLocaleKey("target_object.create_time");
+		field.setParameterName(parameterName);
+		field.setDefaultValue(initValue);
+		field.setFieldGroup("基本信息");
+		field.setType("date_time");
+		field.setRequired(true);
+		field.setPlaceholder("请填写创建时间");
 		return field;
 	}
 
@@ -284,6 +310,19 @@ public class BaseForm extends GenericForm{
 		field.setType("Platform");
 		field.setRequired(true);
 		field.setPlaceholder("请填写平台");
+		return field;
+	}
+
+	protected FormField createTimeFromViewDevice(String parameterName, String initValue){
+		FormField field = new FormField();
+		field.setLabel("创建时间");
+		field.setLocaleKey("view_device.create_time");
+		field.setParameterName(parameterName);
+		field.setDefaultValue(initValue);
+		field.setFieldGroup("基本信息");
+		field.setType("date_time");
+		field.setRequired(true);
+		field.setPlaceholder("请填写创建时间");
 		return field;
 	}
 

@@ -269,6 +269,22 @@ public class ViewDeviceJDBCTemplateDAO extends ArxNamingServiceDAO implements Vi
 		if(resultList==null){
 			return;//do nothing when the list is null.
 		}
+		
+ 		MultipleAccessKey filterKey = new MultipleAccessKey();
+ 		filterKey.put(ViewDevice.PLATFORM_PROPERTY, platformId);
+ 		Map<String,Object> emptyOptions = new HashMap<String,Object>();
+ 		
+ 		StatsInfo info = new StatsInfo();
+ 		
+ 
+		StatsItem createTimeStatsItem = new StatsItem();
+		//ViewDevice.CREATE_TIME_PROPERTY
+		createTimeStatsItem.setDisplayName("查看设备");
+		createTimeStatsItem.setInternalName(formatKeyForDateLine(ViewDevice.CREATE_TIME_PROPERTY));
+		createTimeStatsItem.setResult(statsWithGroup(DateKey.class,wrapWithDate(ViewDevice.CREATE_TIME_PROPERTY),filterKey,emptyOptions));
+		info.addItem(createTimeStatsItem);
+ 				
+ 		resultList.setStatsInfo(info);
 
  	
  		
@@ -425,7 +441,7 @@ public class ViewDeviceJDBCTemplateDAO extends ArxNamingServiceDAO implements Vi
  		return prepareViewDeviceCreateParameters(viewDevice);
  	}
  	protected Object[] prepareViewDeviceUpdateParameters(ViewDevice viewDevice){
- 		Object[] parameters = new Object[8];
+ 		Object[] parameters = new Object[9];
  
  		parameters[0] = viewDevice.getName();
  		parameters[1] = viewDevice.getLongitude();
@@ -434,15 +450,16 @@ public class ViewDeviceJDBCTemplateDAO extends ArxNamingServiceDAO implements Vi
  		if(viewDevice.getPlatform() != null){
  			parameters[4] = viewDevice.getPlatform().getId();
  		}
- 		
- 		parameters[5] = viewDevice.nextVersion();
- 		parameters[6] = viewDevice.getId();
- 		parameters[7] = viewDevice.getVersion();
+ 
+ 		parameters[5] = viewDevice.getCreateTime();		
+ 		parameters[6] = viewDevice.nextVersion();
+ 		parameters[7] = viewDevice.getId();
+ 		parameters[8] = viewDevice.getVersion();
  				
  		return parameters;
  	}
  	protected Object[] prepareViewDeviceCreateParameters(ViewDevice viewDevice){
-		Object[] parameters = new Object[6];
+		Object[] parameters = new Object[7];
 		String newViewDeviceId=getNextId();
 		viewDevice.setId(newViewDeviceId);
 		parameters[0] =  viewDevice.getId();
@@ -455,7 +472,8 @@ public class ViewDeviceJDBCTemplateDAO extends ArxNamingServiceDAO implements Vi
  			parameters[5] = viewDevice.getPlatform().getId();
  		
  		}
- 				
+ 		
+ 		parameters[6] = viewDevice.getCreateTime();		
  				
  		return parameters;
  	}

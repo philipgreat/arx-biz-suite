@@ -19,6 +19,7 @@ const { TextArea } = Input
 const imageURLPrefix = '//localhost:2090'
 
 const imageKeys = [
+  'imagePath',
 ]
 
 
@@ -59,6 +60,7 @@ class TargetObjectUpdateForm extends Component {
     const convertiedValues = selectedRows.map((item) => {
       return {
         ...item,
+        createTime: moment(item.createTime),
 
       }
     })
@@ -327,18 +329,6 @@ class TargetObjectUpdateForm extends Component {
                 </Form.Item>
               </Col>
 
-              <Col lg={12} md={12} sm={24}>
-                <Form.Item label={fieldLabels.imagePath} {...formItemLayout}>
-                  {getFieldDecorator('imagePath', {
-                    initialValue: selectedRow.imagePath,
-                    rules: [{ required: true, message: appLocaleName(userContext,"PleaseInput") }],
-                  })(
-                    <Input size="large" placeholder="图片路径" />
-                    
-                  )}
-                </Form.Item>
-              </Col>
-
             </Row>
           </Form>  
         </Card>
@@ -347,6 +337,23 @@ class TargetObjectUpdateForm extends Component {
         
         
 
+
+        <Card title={<div>{appLocaleName(userContext,"Attachment")} <Popover title={appLocaleName(userContext,"ScanQRCodetoUploadfromSmartPhone")} content={<div><img src='./qrtest.png'/></div>}><Icon type="qrcode" ></Icon></Popover></div>} className={styles.card} bordered={false}>
+          <Form >
+            <Row gutter={16}>
+
+              <Col lg={6} md={12} sm={24}>
+                <ImageComponent
+                  buttonTitle="图片路径"
+                  handlePreview={this.handlePreview}
+                  handleChange={event => this.handleChange(event, 'imagePath')}
+                  fileList={convertedImagesValues.imagePath}
+                />
+              </Col>
+
+            </Row>
+          </Form>
+        </Card>
 
         <FooterToolbar>
           {getErrorInfo()}

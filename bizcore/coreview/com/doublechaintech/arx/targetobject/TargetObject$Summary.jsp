@@ -60,6 +60,10 @@
 <span class="summary-label">${userContext.localeMap['target_object.image_path']}</span>
 <span >${result.imagePath}</span>
 </div>
+<div class="col-xs-12 col-md-3 summary-section">
+<span class="summary-label">${userContext.localeMap['target_object.create_time']}</span>
+<span ><fmt:formatDate pattern="yyyy-MM-dd" value="${result.createTime}" /></span>
+</div>
 
 	</div>
 	

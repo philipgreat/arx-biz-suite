@@ -7,6 +7,7 @@ import com.doublechaintech.arx.BaseEntity;
 import com.doublechaintech.arx.SmartList;
 import com.doublechaintech.arx.MultipleAccessKey;
 import com.doublechaintech.arx.ArxUserContext;
+import com.doublechaintech.arx.platform.PlatformDAO;
 
 
 public interface TargetObjectDAO{
@@ -41,6 +42,14 @@ public interface TargetObjectDAO{
 	
 	
 	public SmartList<TargetObject> queryList(String sql, Object ... parmeters);
-}
+ 
+ 	public SmartList<TargetObject> findTargetObjectByPlatform(String platformId, Map<String,Object> options);
+ 	public int countTargetObjectByPlatform(String platformId, Map<String,Object> options);
+ 	public Map<String, Integer> countTargetObjectByPlatformIds(String[] ids, Map<String,Object> options);
+ 	public SmartList<TargetObject> findTargetObjectByPlatform(String platformId, int start, int count, Map<String,Object> options);
+ 	public void analyzeTargetObjectByPlatform(SmartList<TargetObject> resultList, String platformId, Map<String,Object> options);
+
+ 
+ }
 
 

@@ -19,8 +19,8 @@ const testValues = {};
 /*
 const testValues = {
   name: '测试设备',
-  longitude: '104.16839291367127',
-  latitude: '31.16356402634315',
+  longitude: '103.18947873153617',
+  latitude: '32.39076745326839',
   height: '10000',
   platformId: 'P000001',
 }

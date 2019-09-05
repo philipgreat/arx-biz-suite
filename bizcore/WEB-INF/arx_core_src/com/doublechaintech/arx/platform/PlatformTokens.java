@@ -72,6 +72,7 @@ public class PlatformTokens extends CommonTokens{
 	protected static PlatformTokens allTokens(){
 		
 		return start()
+			.withTargetObjectList()
 			.withViewDeviceList();
 	
 	}
@@ -96,6 +97,72 @@ public class PlatformTokens extends CommonTokens{
 		return this;
 	}
 
+	protected static final String TARGET_OBJECT_LIST = "targetObjectList";
+	public String getTargetObjectList(){
+		return TARGET_OBJECT_LIST;
+	}
+	public PlatformTokens withTargetObjectList(){		
+		addSimpleOptions(TARGET_OBJECT_LIST);
+		return this;
+	}
+	public PlatformTokens analyzeTargetObjectList(){		
+		addSimpleOptions(TARGET_OBJECT_LIST+".anaylze");
+		return this;
+	}
+	public boolean analyzeTargetObjectListEnabled(){		
+		
+		if(checkOptions(this.options(), TARGET_OBJECT_LIST+".anaylze")){
+			return true; //most of the case, should call here
+		}
+		//if not true, then query for global setting
+		return checkOptions(this.options(), ALL_LISTS_ANALYZE);
+	}
+	public PlatformTokens extractMoreFromTargetObjectList(String idsSeperatedWithComma){		
+		addSimpleOptions(TARGET_OBJECT_LIST+".extractIds", idsSeperatedWithComma);
+		return this;
+	}
+	
+	
+	
+	
+	private int targetObjectListSortCounter = 0;
+	public PlatformTokens sortTargetObjectListWith(String field, String descOrAsc){		
+		addSortMoreOptions(TARGET_OBJECT_LIST,targetObjectListSortCounter++, field, descOrAsc);
+		return this;
+	}
+	private int targetObjectListSearchCounter = 0;
+	public PlatformTokens searchTargetObjectListWith(String field, String verb, String value){		
+		addSearchMoreOptions(TARGET_OBJECT_LIST,targetObjectListSearchCounter++, field, verb, value);
+		return this;
+	}
+	
+	public PlatformTokens searchAllTextOfTargetObjectList(String verb, String value){	
+		String field = "id|name|textContent";
+		addSearchMoreOptions(TARGET_OBJECT_LIST,targetObjectListSearchCounter++, field, verb, value);
+		return this;
+	}
+	
+	
+	
+	public PlatformTokens rowsPerPageOfTargetObjectList(int rowsPerPage){		
+		addSimpleOptions(TARGET_OBJECT_LIST+"RowsPerPage",rowsPerPage);
+		return this;
+	}
+	public PlatformTokens currentPageNumberOfTargetObjectList(int currentPageNumber){		
+		addSimpleOptions(TARGET_OBJECT_LIST+"CurrentPage",currentPageNumber);
+		return this;
+	}
+	public PlatformTokens retainColumnsOfTargetObjectList(String[] columns){		
+		addSimpleOptions(TARGET_OBJECT_LIST+"RetainColumns",columns);
+		return this;
+	}
+	public PlatformTokens excludeColumnsOfTargetObjectList(String[] columns){		
+		addSimpleOptions(TARGET_OBJECT_LIST+"ExcludeColumns",columns);
+		return this;
+	}
+	
+	
+		
 	protected static final String VIEW_DEVICE_LIST = "viewDeviceList";
 	public String getViewDeviceList(){
 		return VIEW_DEVICE_LIST;
@@ -165,6 +232,7 @@ public class PlatformTokens extends CommonTokens{
 	
 	public  PlatformTokens searchEntireObjectText(String verb, String value){
 		
+		searchAllTextOfTargetObjectList(verb, value);	
 		searchAllTextOfViewDeviceList(verb, value);	
 		return this;
 	}

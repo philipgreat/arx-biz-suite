@@ -71,12 +71,14 @@ public class TargetObjectTokens extends CommonTokens{
 	
 	protected static TargetObjectTokens allTokens(){
 		
-		return start();
+		return start()
+			.withPlatform();
 	
 	}
 	public static TargetObjectTokens withoutListsTokens(){
 		
-		return start();
+		return start()
+			.withPlatform();
 	
 	}
 	
@@ -95,6 +97,16 @@ public class TargetObjectTokens extends CommonTokens{
 		return this;
 	}
 
+	protected static final String PLATFORM = "platform";
+	public String getPlatform(){
+		return PLATFORM;
+	}
+	public TargetObjectTokens withPlatform(){		
+		addSimpleOptions(PLATFORM);
+		return this;
+	}
+	
+	
 	
 	public  TargetObjectTokens searchEntireObjectText(String verb, String value){
 		
